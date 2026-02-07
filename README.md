@@ -5,100 +5,100 @@ grammer is defined in expr.cpp
 
 Original C grammer is:-
 
-primary-expression:
-    identifier
-    constant
-    string-literal
-    ( expression )
+primary-expression:<br>
+    identifier\
+    constant\
+    string-literal\
+    ( expression )\
 
 
-postfix-expression:
-    primary-expression
-    postfix-expression [ expression ]
-    postfix-expression ( argument-expression-list_opt )
-    postfix-expression . identifier
-    postfix-expression -> identifier
-    postfix-expression ++
-    postfix-expression --
+postfix-expression:<br>
+    primary-expression\
+    postfix-expression [ expression ]\
+    postfix-expression ( argument-expression-list_opt )\
+    postfix-expression . identifier\
+    postfix-expression -> identifier\
+    postfix-expression ++\
+    postfix-expression --\
 
 
-unary-expression:
-    postfix-expression
-    ++ unary-expression
-    -- unary-expression
-    unary-operator cast-expression
-    sizeof unary-expression
-    sizeof ( type-name )
+unary-expression:<br>
+    postfix-expression\
+    ++ unary-expression\
+    -- unary-expression\
+    unary-operator cast-expression\
+    sizeof unary-expression\
+    sizeof ( type-name )\
 
-unary-operator: one of
+unary-operator: one of<br>
     &  *  +  -  ~  !
 
-cast-expression:
-    unary-expression
-    ( type-name ) cast-expression
+cast-expression:<br>
+    unary-expression\
+    ( type-name ) cast-expression\
 
-multiplicative-expression:
-    cast-expression
-    multiplicative-expression * cast-expression
-    multiplicative-expression / cast-expression
-    multiplicative-expression % cast-expression
+multiplicative-expression:<br>
+    cast-expression\
+    multiplicative-expression * cast-expression\
+    multiplicative-expression / cast-expression\
+    multiplicative-expression % cast-expression\
 
-additive-expression:
-    multiplicative-expression
-    additive-expression + multiplicative-expression
-    additive-expression - multiplicative-expression
+additive-expression:<br>
+    multiplicative-expression\
+    additive-expression + multiplicative-expression\
+    additive-expression - multiplicative-expression\
 
-shift-expression:
-    additive-expression
-    shift-expression << additive-expression
-    shift-expression >> additive-expression
+shift-expression:<br>
+    additive-expression\
+    shift-expression << additive-expression\
+    shift-expression >> additive-expression\
 
-relational-expression:
-    shift-expression
-    relational-expression < shift-expression
-    relational-expression > shift-expression
-    relational-expression <= shift-expression
-    relational-expression >= shift-expression
+relational-expression:<br>
+    shift-expression\
+    relational-expression < shift-expression\
+    relational-expression > shift-expression\
+    relational-expression <= shift-expression\
+    relational-expression >= shift-expression\
 
-equality-expression:
-    relational-expression
-    equality-expression == relational-expression
-    equality-expression != relational-expression
+equality-expression:<br>
+    relational-expression\
+    equality-expression == relational-expression\
+    equality-expression != relational-expression\
 
-AND-expression:
-    equality-expression
-    AND-expression & equality-expression
+AND-expression:<br>
+    equality-expression\
+    AND-expression & equality-expression\
 
-exclusive-OR-expression:
-    AND-expression
-    exclusive-OR-expression ^ AND-expression
+exclusive-OR-expression:<br>
+    AND-expression\
+    exclusive-OR-expression ^ AND-expression\
 
-inclusive-OR-expression:
-    exclusive-OR-expression
-    inclusive-OR-expression | exclusive-OR-expression
+inclusive-OR-expression:<br>
+    exclusive-OR-expression\
+    inclusive-OR-expression | exclusive-OR-expression\
 
-logical-AND-expression:
-    inclusive-OR-expression
-    logical-AND-expression && inclusive-OR-expression
+logical-AND-expression:<br>
+    inclusive-OR-expression\
+    logical-AND-expression && inclusive-OR-expression\
 
-logical-OR-expression:
-    logical-AND-expression
-    logical-OR-expression || logical-AND-expression
+logical-OR-expression:<br>
+    logical-AND-expression\
+    logical-OR-expression || logical-AND-expression\
 
-conditional-expression:
-    logical-OR-expression
-    logical-OR-expression ? expression : conditional-expression
+conditional-expression:<br>
+    logical-OR-expression\
+    logical-OR-expression ? expression : conditional-expression\
 
-assignment-expression:
-    conditional-expression
-    unary-expression assignment-operator assignment-expression
+assignment-expression:<br>
+    conditional-expression\
+    unary-expression assignment-operator assignment-expression\
 
-assignment-operator: one of
-    =  *=  /=  %=  +=  -=  <<=  >>=  &=  ^=  |=
+assignment-operator: one of<br>
+    =  *=  /=  %=  +=  -=  <<=  >>=  &=  ^=  |=\
 
-expression:
-    assignment-expression
-    expression , assignment-expression
+expression:<br>
+    assignment-expression\
+    expression , assignment-expression\
 
 
 
