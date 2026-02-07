@@ -9,7 +9,7 @@ primary-expression:<br>
     identifier\
     constant\
     string-literal\
-    ( expression )\
+    ( expression )<br>
 
 
 postfix-expression:<br>
@@ -19,7 +19,7 @@ postfix-expression:<br>
     postfix-expression . identifier\
     postfix-expression -> identifier\
     postfix-expression ++\
-    postfix-expression --\
+    postfix-expression --<br>
 
 
 unary-expression:<br>
@@ -28,7 +28,7 @@ unary-expression:<br>
     -- unary-expression\
     unary-operator cast-expression\
     sizeof unary-expression\
-    sizeof ( type-name )\
+    sizeof ( type-name )<br>
 
 unary-operator: one of<br>
     &  *  +  -  ~  !
@@ -41,64 +41,64 @@ multiplicative-expression:<br>
     cast-expression\
     multiplicative-expression * cast-expression\
     multiplicative-expression / cast-expression\
-    multiplicative-expression % cast-expression\
+    multiplicative-expression % cast-expression<br>
 
 additive-expression:<br>
     multiplicative-expression\
     additive-expression + multiplicative-expression\
-    additive-expression - multiplicative-expression\
+    additive-expression - multiplicative-expression<br>
 
 shift-expression:<br>
     additive-expression\
     shift-expression << additive-expression\
-    shift-expression >> additive-expression\
+    shift-expression >> additive-expression<br>
 
 relational-expression:<br>
     shift-expression\
     relational-expression < shift-expression\
     relational-expression > shift-expression\
     relational-expression <= shift-expression\
-    relational-expression >= shift-expression\
+    relational-expression >= shift-expression<br>
 
 equality-expression:<br>
     relational-expression\
     equality-expression == relational-expression\
-    equality-expression != relational-expression\
+    equality-expression != relational-expression<br>
 
 AND-expression:<br>
     equality-expression\
-    AND-expression & equality-expression\
+    AND-expression & equality-expression<br>
 
 exclusive-OR-expression:<br>
     AND-expression\
-    exclusive-OR-expression ^ AND-expression\
+    exclusive-OR-expression ^ AND-expression<br>
 
 inclusive-OR-expression:<br>
     exclusive-OR-expression\
-    inclusive-OR-expression | exclusive-OR-expression\
+    inclusive-OR-expression | exclusive-OR-expression<br>
 
 logical-AND-expression:<br>
     inclusive-OR-expression\
-    logical-AND-expression && inclusive-OR-expression\
+    logical-AND-expression && inclusive-OR-expression<br>
 
 logical-OR-expression:<br>
     logical-AND-expression\
-    logical-OR-expression || logical-AND-expression\
+    logical-OR-expression || logical-AND-expression<br>
 
 conditional-expression:<br>
     logical-OR-expression\
-    logical-OR-expression ? expression : conditional-expression\
+    logical-OR-expression ? expression : conditional-expression<br>
 
 assignment-expression:<br>
     conditional-expression\
-    unary-expression assignment-operator assignment-expression\
+    unary-expression assignment-operator assignment-expression<br>
 
 assignment-operator: one of<br>
-    =  *=  /=  %=  +=  -=  <<=  >>=  &=  ^=  |=\
+    =  *=  /=  %=  +=  -=  <<=  >>=  &=  ^=  |=<br>
 
 expression:<br>
     assignment-expression\
-    expression , assignment-expression\
+    expression , assignment-expression<br>
 
 
 
@@ -106,88 +106,88 @@ expression:<br>
 
 Modified Grammer in our parser is:-
 
-primary-expression:
-    identifier
-    constant
-    string-literal
-    ( expression )
+primary-expression:<br>
+    identifier<br>
+    constant<br>
+    string-literal<br>
+    ( expression )<br>
 
-postfix-expression: 
-    primary-expression
-    primary-expression [ expression ]
-    primary-expression ( argument-expression-list_opt )
-    primary-expression . identifier
-    primary-expression -> identifier
-    primary-expression ++
-    primary-expression --
+postfix-expression:<br>
+    primary-expression<br>
+    primary-expression [ expression ]<br>
+    primary-expression ( argument-expression-list_opt )<br>
+    primary-expression . identifier<br>
+    primary-expression -> identifier<br>
+    primary-expression ++<br>
+    primary-expression --<br>
 
-unary-expression:
-    postfix-expression
-    ++ expression
-    -- expression
-    unary-operator expression
-    ( type-name ) expression // cast-expression merged into unary-expression due to cyclic reference
-    sizeof expression
-    sizeof ( type-name )
+unary-expression:<br>
+    postfix-expression<br>
+    ++ expression<br>
+    -- expression<br>
+    unary-operator expression<br>
+    ( type-name ) expression // cast-expression merged into unary-expression due to cyclic reference<br>
+    sizeof expression<br>
+    sizeof ( type-name )<br>
 
-multiplicative-expression:
-    unary-expression
-    unary-expression * multiplicative-expression
-    unary-expression / multiplicative-expression
-    unary-expression % multiplicative-expression
+multiplicative-expression:<br>
+    unary-expression<br>
+    unary-expression * multiplicative-expression<br>
+    unary-expression / multiplicative-expression<br>
+    unary-expression % multiplicative-expression<br>
 
-additive-expression:
-    multiplicative-expression
-    multiplicative-expression + additive-expression 
-    multiplicative-expression - additive-expression
+additive-expression:<br>
+    multiplicative-expression<br>
+    multiplicative-expression + additive-expression<br>
+    multiplicative-expression - additive-expression<br>
 
-shift-expression:
-    additive-expression
-    additive-expression << shift-expression 
-    additive-expression >> shift-expression
+shift-expression:<br>
+    additive-expression<br>
+    additive-expression << shift-expression<br> 
+    additive-expression >> shift-expression<br>
 
-relational-expression:
-    shift-expression
-    shift-expression < relational-expression
-    shift-expression > relational-expression
-    shift-expression <= relational-expression
-    shift-expression >= relational-expression
+relational-expression:<br>
+    shift-expression<br>
+    shift-expression < relational-expression<br>
+    shift-expression > relational-expression<br>
+    shift-expression <= relational-expression<br>
+    shift-expression >= relational-expression<br>
 
-equality-expression:
-    relational-expression
-    relational-expression == equality-expression 
-    relational-expression != equality-expression
+equality-expression:<br>
+    relational-expression<br>
+    relational-expression == equality-expression<br>
+    relational-expression != equality-expression<br>
 
-AND-expression:
-    equality-expression
-    equality-expression & AND-expression
+AND-expression:<br>
+    equality-expression<br>
+    equality-expression & AND-expression<br>
 
-exclusive-OR-expression:
-    AND-expression
-    AND-expression ^ exclusive-OR-expression
+exclusive-OR-expression:<br>
+    AND-expression<br>
+    AND-expression ^ exclusive-OR-expression<br>
 
-inclusive-OR-expression:
-    exclusive-OR-expression
-    exclusive-OR-expression | inclusive-OR-expression
+inclusive-OR-expression:<br>
+    exclusive-OR-expression<br>
+    exclusive-OR-expression | inclusive-OR-expression<br>
 
-logical-AND-expression:
-    inclusive-OR-expression
-    inclusive-OR-expression && logical-AND-expression
+logical-AND-expression:<br>
+    inclusive-OR-expression<br>
+    inclusive-OR-expression && logical-AND-expression<br>
 
-logical-OR-expression:
-    logical-AND-expression
-    logical-AND-expression || logical-OR-expression
+logical-OR-expression:<br>
+    logical-AND-expression<br>
+    logical-AND-expression || logical-OR-expression<br>
 
-conditional-expression:
-    logical-OR-expression
-    logical-OR-expression ? expression : conditional-expression
+conditional-expression:<br>
+    logical-OR-expression<br>
+    logical-OR-expression ? expression : conditional-expression<br>
 
-assignment-expression:
-    conditional-expression
-    conditional-expression assignment-operator assignment-expression
+assignment-expression:<br>
+    conditional-expression<br>
+    conditional-expression assignment-operator assignment-expression<br>
 
-assignment-operator: one of
-    =  *=  /=  %=  +=  -=  <<=  >>=  &=  ^=  |=
+assignment-operator: one of<br>
+    =  *=  /=  %=  +=  -=  <<=  >>=  &=  ^=  |=<br>
 
-expression:
-    assignment-expression , expression
+expression:<br>
+    assignment-expression , expression<br>
