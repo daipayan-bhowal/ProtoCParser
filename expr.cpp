@@ -81,6 +81,8 @@ TreeNode* primary_expression(bool_t* IsPrim)
             t->attrib.ch = ConvertStrtoASCII(getTokenString());
         }
         //white_spaces();
+        if (lookahead() == EOF)
+            return t;
         getNextToken();
     }
     else if (token == ID)
@@ -90,6 +92,8 @@ TreeNode* primary_expression(bool_t* IsPrim)
         t = newExpNode(IDEN);
         *IsPrim = True;
         //white_spaces();
+        if (lookahead() == EOF)
+            return t;
         getNextToken();
 
     }
@@ -100,6 +104,8 @@ TreeNode* primary_expression(bool_t* IsPrim)
         t->attrib.strval = getTokenString();
         *IsPrim = True;
         //white_spaces();
+        if (lookahead() == EOF)
+            return t;
         getNextToken();
     }
     else if (token == '(')
@@ -118,6 +124,8 @@ TreeNode* primary_expression(bool_t* IsPrim)
         {
             *IsPrim = True;
         }
+        if (lookahead() == EOF)
+            return t;
 
     }
     /*else if ((t = expression()) == NULL)

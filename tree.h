@@ -127,6 +127,9 @@ typedef struct Tree TreeNode;
 
 TreeNode* newStmtNode(StmtType tp);
 TreeNode* newExpNode(ExpType tp);
+void printTree(TreeNode* t);
+void debugOp(OpTokenType op);
+
 /* Based on K & R C book modified grammer */
 TreeNode* primary_expression(bool_t* IsPrim);
 TreeNode* expression();
