@@ -672,6 +672,7 @@ TreeNode* unary_expression()
     //  printf("%s:%d %d\n", __func__,__LINE__, getch());
     //   printf("%s:%d %c\n", __func__,__LINE__, getch());
     bool_t IsPost = False;
+    bool_t IsPrim = False;
     int tok = getCurrentToken(), tok1, tok2;
     if (tok == '(')
     {
@@ -987,8 +988,8 @@ TreeNode* unary_expression()
     {
         // printf("frame: %s tok:%d tok_str:%s\n", __func__, getCurrentToken(), getTokenString()->str);
         //checkEOF();
-        t = postfix_expression(&IsPost);
-        if (IsPost == True)
+        t = postfix_expression(&IsPost, &IsPrim);
+        if (IsPost == True || IsPrim == True)
             return t;
         else
             return NULL;
@@ -997,7 +998,7 @@ TreeNode* unary_expression()
     return t;
 }
 
-TreeNode* postfix_expression(bool_t* IsPost)
+TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim_g)
 {
     printf("frame: %s tok:%d tok_str:%s\n", __func__, getCurrentToken(), getTokenString()->str);
     //white_spaces();
@@ -1005,7 +1006,7 @@ TreeNode* postfix_expression(bool_t* IsPost)
     TreeNode* t2;
     bool_t IsPrim = False;
     t = primary_expression(&IsPrim);
-
+	*IsPrim_g = IsPrim;
 
     //white_spaces();
     //   return TRUE; 

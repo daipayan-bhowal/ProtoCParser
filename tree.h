@@ -156,5 +156,5 @@ TreeNode* additive_expression();
 TreeNode* multiplicative_expression();
 TreeNode* cast_expression();
 TreeNode* unary_expression();
-TreeNode* postfix_expression(bool_t* IsPost);
+TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim);
 TreeNode* argument_expression_list();

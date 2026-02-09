@@ -27,7 +27,8 @@ int main(int argc, char* argv[])
 	} */
 	if ((expr = expression()) != NULL)
 	{
-		printf("It is an expression() !");
+		printf("It is an expression() !\n");
+		printf("Printing the expression tree:\n");
 		printTree(expr);
 		free(expr);
 	}
