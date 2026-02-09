@@ -364,6 +364,11 @@ START: // starting point of the code
 			}
 
 		}
+		else
+		{
+			*k = pos;
+			return '/';
+		}
 
 
 		break;
@@ -484,6 +489,7 @@ START: // starting point of the code
 			return MOD_ASSIGN;
 		}
 		else {
+			*k = pos;
 			return '%';
 		}
 		break;

@@ -6,7 +6,7 @@
 
 typedef enum
 {
-    OP_PLUS, // '+'
+    OP_PLUS = 1, // '+'
     OP_PLUSEQ, // '+='
     OP_MINUS, // '-'
     OP_MINUSEQ, // '-'
@@ -63,10 +63,18 @@ typedef enum
     OP_COMMA
 } OpTokenType;
 
+typedef enum
+{
+    INTEGER = 1,
+    FPOINT,
+    STRING,
+    CHARAC
+
+} OperandType;
 
 typedef enum
 {
-    If,
+    If = 1,
     While,
     Switch,
     Do,
@@ -75,7 +83,7 @@ typedef enum
 
 typedef enum
 {
-    OP,  // Operator
+    OP = 1,  // Operator
     IDEN,  // Identifier
     ICONST, // Integer Const
     FCONST,  // Float COnst
@@ -114,6 +122,7 @@ struct Tree
     } Type;
     union {
         OpTokenType op;
+        OperandType operd;
         long ival; // for storing integer in decimal form
         double fval;  // for storing floating point number
         string_t strval;  // for storing string literal
@@ -128,7 +137,7 @@ typedef struct Tree TreeNode;
 TreeNode* newStmtNode(StmtType tp);
 TreeNode* newExpNode(ExpType tp);
 void printTree(TreeNode* t);
-void debugOp(OpTokenType op);
+void debugOp(TreeNode *t);
 
 /* Based on K & R C book modified grammer */
 TreeNode* primary_expression(bool_t* IsPrim);
