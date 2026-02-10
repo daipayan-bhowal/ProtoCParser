@@ -109,6 +109,7 @@ int getTokenByPos(string_t str, int* k);
 void setStringBuffer(string_t string_buf);
 int getCurrentToken();
 int getNextToken();
+void resetToken();
 string_t getTokenString();
 int getTokenPos();
 bool_t MarkEndOfFile(bool_t Mark);

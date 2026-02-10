@@ -123,6 +123,7 @@ struct Tree
     union {
         OpTokenType op;
         OperandType operd;
+        string_t operand;
         long ival; // for storing integer in decimal form
         double fval;  // for storing floating point number
         string_t strval;  // for storing string literal

@@ -1039,11 +1039,11 @@ void setStringBuffer(string_t string_buf) {
 }
 
 
-
+static int current_pos = 0;
 int getNextToken()
 {
-	static int current_pos;
-	int start_position, end_position;
+	
+	int start_position = 0, end_position = 0;
 
 	start_position = current_pos;
 	int t = getTokenByPos(FileStrBuffer, &current_pos);
@@ -1070,6 +1070,13 @@ int getNextToken()
 string_t getTokenString()
 {
 	return token_struct_ptr->str_token;
+}
+void resetToken()
+{
+	current_pos = 0;
+	token_struct_ptr = (struct Token*)realloc(token_struct_ptr, sizeof(struct Token));
+	//token_struct_len = 1;
+	//getNextToken();
 }
 
 int lookahead()
