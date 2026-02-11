@@ -123,12 +123,12 @@ postfix-expression:<br>
     primary-expression --<br>
 
 unary-expression:<br>
-    postfix-expression<br>
-    ++ expression<br>
-    -- expression<br>
-    unary-operator expression<br>
+    postfix-expression<br> 
+    ++ expression<br>   // expression() is called for a infinite loop so that parser doesn't terminate until EOF
+    -- expression<br>    // expression() is called for a infinite loop so that parser doesn't terminate until EOF
+    unary-operator expression<br>   // expression() is called for a infinite loop so that parser doesn't terminate until EOF
     ( type-name ) expression // cast-expression merged into unary-expression due to cyclic reference<br>
-    sizeof expression<br>
+    sizeof expression<br> 
     sizeof ( type-name )<br>
 
 multiplicative-expression:<br>
