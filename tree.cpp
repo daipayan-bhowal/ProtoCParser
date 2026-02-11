@@ -183,20 +183,28 @@ void debugOp(TreeNode *t)
                 printf("OP_SLONG_CAST\n");
                 break;
             case OP_ULONG_CAST:
+                printf("OP_ULONG_CAST\n");
                 break;
-            case OP_CLONG_CAST:
+			case OP_CLONG_CAST:  // const long
+                printf("OP_CLONG_CAST\n");
                 break;
             case OP_SSHORT_CAST:
+                printf("OP_CLONG_CAST\n");
                 break;
             case OP_USHORT_CAST:
+                printf("OP_USHORT_CAST\n");
                 break;
             case OP_CSHORT_CAST:
+                printf("OP_CLONG_CAST\n");
                 break;
             case OP_FLOAT_CAST:
+                printf("OP_FLOAT_CAST\n");
                 break;
             case OP_CHAR_CAST:
+                printf("OP_CHAR_CAST\n");
                 break;
             case OP_DOUBLE_CAST:
+                printf("OP_DOUBLE_CAST\n");
                 break;
             case OP_COMMA:
                 printf("OP_COMMA\n");

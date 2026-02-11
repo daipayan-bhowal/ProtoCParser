@@ -701,7 +701,7 @@ TreeNode* unary_expression()
                     t2->attrib.op = OP_UINT_CAST;
                 else if (tok1 == CONST)
                     t2->attrib.op = OP_CINT_CAST;
-                t2->child[1] = expression();
+                //t2->child[1] = expression();
                 break;
             case LONG:
                 t2 = newExpNode(OP);
@@ -712,7 +712,7 @@ TreeNode* unary_expression()
                     t2->attrib.op = OP_ULONG_CAST;
                 else if (tok1 == CONST)
                     t2->attrib.op = OP_CLONG_CAST;
-                t2->child[1] = expression();
+                //t2->child[1] = expression();
                 break;
             case SHORT:
                 t2 = newExpNode(OP);
@@ -722,7 +722,7 @@ TreeNode* unary_expression()
                     t2->attrib.op = OP_USHORT_CAST;
                 else if (tok1 == CONST)
                     t2->attrib.op = OP_CSHORT_CAST;
-                t2->child[1] = expression();
+                //t2->child[1] = expression();
                 break;
 
             case CHAR:
@@ -733,7 +733,7 @@ TreeNode* unary_expression()
                     t2->attrib.op = OP_USHORT_CAST;
                 else if (tok1 == CONST)
                     t2->attrib.op = OP_CSHORT_CAST;
-                t2->child[1] = expression();
+                //t2->child[1] = expression();
                 break;
             default:
                 IsParseFailed(__func__, __LINE__);
@@ -759,14 +759,14 @@ TreeNode* unary_expression()
                 t2 = newExpNode(OP);
                 t2->attrib.op = OP_SINT_CAST;
                 checkEOF();
-                t2->child[1] = expression();
+                //t2->child[1] = expression();
                 break;
 
             case FLOAT:
                 t2 = newExpNode(OP);
                 t2->attrib.op = OP_FLOAT_CAST;
                 checkEOF();
-                t2->child[1] = expression();
+                //t2->child[1] = expression();
 
                 break;
 
@@ -774,14 +774,14 @@ TreeNode* unary_expression()
                 t2 = newExpNode(OP);
                 t2->attrib.op = OP_SLONG_CAST;
                 checkEOF();
-                t2->child[1] = expression();
+                //t2->child[1] = expression();
                 break;
 
             case DOUBLE:
                 t2 = newExpNode(OP);
                 t2->attrib.op = OP_DOUBLE_CAST;
                 checkEOF();
-                t2->child[1] = expression();
+                //t2->child[1] = expression();
 
                 break;
 
@@ -789,14 +789,14 @@ TreeNode* unary_expression()
                 t2 = newExpNode(OP);
                 t2->attrib.op = OP_SSHORT_CAST;
                 checkEOF();
-                t2->child[1] = expression();
+                //t2->child[1] = expression();
                 break;
 
             case CHAR:
                 t2 = newExpNode(OP);
                 t2->attrib.op = OP_CHAR_CAST;
                 checkEOF();
-                t2->child[1] = expression();
+                //t2->child[1] = expression();
                 break;
             }
 
@@ -813,6 +813,17 @@ TreeNode* unary_expression()
         {
             printf("error: expected ')' !\n");
             exit(0);
+        }
+        else
+        {   
+            if (t2 != NULL)
+            {
+                TreeNode *temp = primary_expression(&IsPrim);
+                if (IsPrim == True)
+                    t2->child[0] = temp;
+                else
+                    t2->child[0] = expression();
+            }
         }
         return t2;
 
