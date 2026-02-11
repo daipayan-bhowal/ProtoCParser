@@ -44,5 +44,6 @@ int main(int argc, char* argv[])
 	expr_test("C:\\MyWork\\prat.c");
 	expr_test("C:\\MyWork\\prat2.c");
 	expr_test("C:\\MyWork\\prat3.c");
+	expr_test("C:\\MyWork\\prat4.c");
 
 }
