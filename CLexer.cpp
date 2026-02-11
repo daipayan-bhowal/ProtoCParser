@@ -757,7 +757,7 @@ KEYWORD:	 // start with keyword portion
 	{
 		bool is_keyword = false;
 		//  printf("keyword hit! next char is %d\n", at(str, pos));
-		string_t string_id = partOfstring(str, start_pos, last_pos - start_pos);
+		string_t string_id = partOfstring(str, start_pos, last_pos - start_pos+1);
 		printf("String fetched is:%s\n", c_string(string_id));
 		int token = keyword_check(string_id, &is_keyword);
 		switch (at(str, pos))
