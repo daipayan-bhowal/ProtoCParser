@@ -4,7 +4,7 @@ and also coding style is inspired from "Compiler Construction: Principles and Pr
 
 grammer is defined in expr.cpp
 
-Original C grammer is:-
+##Original C grammer is:-
 
 primary-expression:<br>
     identifier\
@@ -105,7 +105,7 @@ expression:<br>
 
 
 
-Modified Grammer in our parser is:-
+##Modified Grammer in our parser is:-
 
 primary-expression:<br>
     identifier<br>
