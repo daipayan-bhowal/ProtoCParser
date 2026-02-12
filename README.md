@@ -1,6 +1,17 @@
 # Proto C Parser
-This is a simple handwritten C parser for expression as grammer in the book "The C Programming Language" by Brian W. Kernighan and Dennis M. Ritchie,<br>
+This is a simple handwritten C parser for expression as grammer given in the book "The C Programming Language" by Brian W. Kernighan and Dennis M. Ritchie,<br>
 and also coding style is inspired from "Compiler Construction: Principles and Practice" by Kenneth C. Louden.
+
+## Usage
+
+create a file in C:\Mywork\prat1.c
+prat.c will have only 1 line of C expression, similarly create prat2.c, prat3.c & prat4.c
+
+prat.c
+-------
+x / y % z + y
+
+   
 
 grammer is defined in expr.cpp
 
