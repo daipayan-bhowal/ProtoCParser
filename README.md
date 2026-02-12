@@ -4,8 +4,8 @@ and also coding style is inspired from "Compiler Construction: Principles and Pr
 
 ## Usage
 
-create a file in C:\Mywork\prat.c
-prat.c will have only 1 line of C expression, similarly create prat2.c, prat3.c & prat4.c
+create a file in C:\Mywork\prat.c<br>
+prat.c will have only 1 line of C expression, similarly create prat2.c, prat3.c & prat4.c<br>
 
 prat.c
 -------
