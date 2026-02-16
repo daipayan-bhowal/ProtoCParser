@@ -33,6 +33,12 @@
     <ClCompile Include="expr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="declr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="statmt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLexer.h">

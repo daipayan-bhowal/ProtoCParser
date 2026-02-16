@@ -24,7 +24,7 @@ void CheckEOF(const char source_func[], int line)
         IsParseFailed(source_func, line);
     }
 }
-#define checkEOF() CheckEOF(__func__,__LINE__)
+
 
 
 TreeNode* primary_expression(bool_t* IsPrim)

@@ -78,7 +78,12 @@ typedef enum
     While,
     Switch,
     Do,
-    For
+    For,
+    Label,
+    Goto,
+    Break,
+    Return,
+    Continue
 } StmtType;
 
 typedef enum
@@ -140,6 +145,10 @@ TreeNode* newExpNode(ExpType tp);
 void printTree(TreeNode* t);
 void debugOp(TreeNode *t);
 
+void IsParseFailed(const char source_func[], int line);
+void CheckEOF(const char source_func[], int line);
+#define checkEOF() CheckEOF(__func__,__LINE__)
+
 /* Based on K & R C book modified grammer */
 TreeNode* primary_expression(bool_t* IsPrim);
 TreeNode* expression();
@@ -159,3 +168,5 @@ TreeNode* cast_expression();
 TreeNode* unary_expression();
 TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim);
 TreeNode* argument_expression_list();
+
+void declaration();
