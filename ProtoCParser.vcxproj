@@ -131,6 +131,7 @@
     <ClCompile Include="compile_t.cpp" />
     <ClCompile Include="declr.cpp" />
     <ClCompile Include="expr.cpp" />
+    <ClCompile Include="func.cpp" />
     <ClCompile Include="ProtoCParser.cpp" />
     <ClCompile Include="statmt.cpp" />
     <ClCompile Include="string_t.cpp" />

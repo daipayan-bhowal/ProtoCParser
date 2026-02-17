@@ -320,11 +320,9 @@ void declarator()
 {
 	int tok = getCurrentToken();
 	bool_t isTypeQual = False;
-	while (tok == '*')
+	if (tok == '*')
 	{
-		checkEOF();
-		getNextToken();
-		while (check_type_qualifier(&isTypeQual))
+		while (check_type_qualifier(&isTypeQual) || tok == '*')
 		{
 			checkEOF();
 			getNextToken();

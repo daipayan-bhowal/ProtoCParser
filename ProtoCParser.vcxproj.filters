@@ -39,6 +39,9 @@
     <ClCompile Include="statmt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="func.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLexer.h">

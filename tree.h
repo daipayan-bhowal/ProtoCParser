@@ -170,3 +170,8 @@ TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim);
 TreeNode* argument_expression_list();
 
 void declaration();
+void declaration_specifiers();
+void declarator();
+void abstract_declarator();
+TreeNode* statement();
+
