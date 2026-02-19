@@ -2,6 +2,11 @@
 This is a simple handwritten C parser for expression as grammer given in the book "The C Programming Language" by Brian W. Kernighan and Dennis M. Ritchie,<br>
 and also coding style is inspired from "Compiler Construction: Principles and Practice" by Kenneth C. Louden.
 
+## Lexer 
+
+Lexer for C is adopted from my DELex repo: 
+https://github.com/daipayan-bhowal/DELex
+
 ## Usage
 
 create a file in C:\Mywork\prat.c<br>
