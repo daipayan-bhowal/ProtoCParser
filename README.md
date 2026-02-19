@@ -2,6 +2,8 @@
 This is a simple handwritten C parser for expression as grammer given in the book "The C Programming Language" by Brian W. Kernighan and Dennis M. Ritchie,<br>
 and also coding style is inspired from "Compiler Construction: Principles and Practice" by Kenneth C. Louden.
 
+expression grammer is defined in expr.cpp
+
 ## Prerequisite
 Visual Studio 2022 Community 
 
@@ -19,9 +21,6 @@ prat.c
 -------
 x / y % z + y
 
-   
-
-grammer is defined in expr.cpp
 
 ## Original C grammer is:-
 
