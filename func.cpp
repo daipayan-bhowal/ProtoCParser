@@ -5,6 +5,7 @@ TreeNode* body() // compound statement and body are the same thing in C language
 {
 	TreeNode* t;
 	int tok = getCurrentToken();
+	bool_t IsDcl = False;
 	if (tok == '{')
 	{
 		checkEOF();
@@ -15,7 +16,7 @@ TreeNode* body() // compound statement and body are the same thing in C language
 			getNextToken();
 			return NULL;
 		}
-		declaration();
+		declaration(&IsDcl);
 		t = statement();
 		if (tok == '}')
 		{

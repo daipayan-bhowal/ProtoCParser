@@ -142,16 +142,17 @@ void declaration_specifiers()
 	}
 	else if (isStorage == True && isTypeSpecf == True)
 	{
-
 	}
 	else if (isTypeQual == True && isTypeSpecf == True)
 	{
 	}
 	else if (isStorage == True && isTypeQual == True && isTypeSpecf == True)
 	{
-
 	}
 	else if (isStorage == False && isTypeQual == False && isTypeSpecf == True)
+	{
+	}
+	else if (isTypeSpecf == True)
 	{
 
 	}
@@ -170,6 +171,7 @@ direct_declarator
 	| '[' ']'
 	| '(' parameter_type_list ')'
 	| '(' ')'
+	| IDENTIFIER ';'
 	| IDENTIFIER '[' constant_expression ']' direct_declarator
 	| IDENTIFIER '[' ']' direct_declarator
 	| IDENTIFIER '(' parameter_type_list ')' direct_declarator
@@ -192,8 +194,12 @@ void direct_declarator()
 			checkEOF();
 			getNextToken();
 			count_id++;
+			if (tok == ';')
+				return;
 		}
-		else if (tok == '(')
+
+
+		if (tok == '(')
 		{
 			checkEOF();
 			getNextToken();
@@ -210,26 +216,43 @@ void direct_declarator()
 				}
 
 			}
-			if (tok != ')')
-			{
-				printf("error: expected ')' !\n");
-				exit(0);
-			}
-			else
+			if (tok == ')')
 			{
 				direct_declarator();
 				checkEOF();
 				getNextToken();
+				return;
 			}
 
 		}
+		else if (tok == '[')
+		{
+			checkEOF();
+			getNextToken();
+			if (tok == ']')
+			{
+				checkEOF();
+				getNextToken();
+				return;
+			}
+			else
+			{
+				expression();
+				if (tok != ']')
+				{
+					printf("error: expected ']' !\n");
+					exit(0);
+				}
+				else
+				{
+					checkEOF();
+					getNextToken();
+				}
+			}
+		}
 	}
-	if (count_id < 1)
-	{
-		printf("error: expected identifier !\n");
-		exit(0);
-	}
-	while (tok != '(' && tok != '[' && tok != ')' && tok != ']')
+
+	while (count_id > 1 && tok != '(' && tok != '[' && tok != ')' && tok != ']')
 	{
 		checkEOF();
 		getNextToken();
@@ -302,7 +325,13 @@ void direct_declarator()
 					getNextToken();
 				}
 			}
+	
 		}
+	}
+	if (count_id < 1)
+	{
+		printf("error: expected identifier !\n");
+		exit(0);
 	}
 }
 /*
@@ -382,8 +411,9 @@ void init_declarator()
 
 void init_declarator_list()
 { 
-	int tok = getCurrentToken();
+	
 	init_declarator();
+	int tok = getCurrentToken();
 	if (tok == ',')
 	{
 		checkEOF();
@@ -397,24 +427,30 @@ void init_declarator_list()
 	| declaration_specifiers init_declarator_list ';'
 */
 
-void declaration()
+void declaration(bool_t *IsDecl)
 {
 	int tok = getCurrentToken();
 	declaration_specifiers();
 	if (tok != ';')
 	{
-		checkEOF();
-		getNextToken();
-		init_declarator_list();
+		init_declarator_list();	
+		tok = getCurrentToken();
 		if (tok != ';')
 		{
 			printf("error: expected ';' at end !\n");
 			exit(0);
 		}
+		else
+		{
+			*IsDecl = True;
+			return;
+		}
 	}
 	else
+	{
+		*IsDecl = True;
 		return;
-
+	}
 }
 /* 
    direct_abstract_declarator

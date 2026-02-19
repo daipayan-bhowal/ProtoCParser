@@ -106,6 +106,7 @@ TreeNode* expression_statement()
 TreeNode* statement()
 {
 	TreeNode* t= NULL;
+	bool_t IsDcl = False;
 	int tok = getCurrentToken();
 	if (tok == ID)
 	{
@@ -130,7 +131,7 @@ TreeNode* statement()
 			getNextToken();
             return NULL;
 		}
-		declaration();
+		declaration(&IsDcl);
 		t = statement();
 		if (tok == '}')
 		{
