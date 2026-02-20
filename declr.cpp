@@ -283,7 +283,7 @@ void direct_declarator()
 		}
 	}
 
-	while (count_id > 1 && tok != '(' && tok != '[' && tok != ')' && tok != ']')
+	while (count_id > 0 && tok != '(' && tok != '[' && tok != ')' && tok != ']')
 	{
 		checkEOF();
 		getNextToken();
