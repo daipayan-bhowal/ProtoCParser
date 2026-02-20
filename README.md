@@ -1,6 +1,6 @@
 # Proto C Parser
 This is a simple handwritten C parser for expression as grammer given in the book "The C Programming Language" by Brian W. Kernighan and Dennis M. Ritchie,<br>
-and also coding style is inspired from "Compiler Construction: Principles and Practice" by Kenneth C. Louden.
+and also coding style is inspired from "Compiler Construction: Principles and Practice" by Kenneth C. Louden. Orignally parts of the code were written in KiiT University.
 
 expression grammer is defined in expr.cpp
 
