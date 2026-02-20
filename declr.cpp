@@ -5,7 +5,7 @@ void initializer_list();
 
 
 
-int check_storage_class(bool_t* isStorage)
+int check_storage_class(bool_t* isStorage, int* count_stor)
 {
 	int tok = getCurrentToken();
 		int sclass = -1;
@@ -17,19 +17,19 @@ int check_storage_class(bool_t* isStorage)
 		{
 			sclass = tok;
 			*isStorage = True;
+			*count_stor++;
 			checkEOF();
 			getNextToken();
 			return sclass;
 		}
 		else
 		{
-			*isStorage = False;
 			return -1;
 		}
 
 }
 
-int check_type_qualifier(bool_t* isTypQual)
+int check_type_qualifier(bool_t* isTypQual, int *count_qual)
 {
 	int tok = getCurrentToken();
 	int qual = -1;
@@ -38,19 +38,19 @@ int check_type_qualifier(bool_t* isTypQual)
 	{
 		qual = tok;
 		*isTypQual = True;
+		*count_qual++;
 		checkEOF();
 		getNextToken();
 		return qual;
 	}
 	else
 	{
-		*isTypQual = False;
 		return -1;
 	}
 
 }
 
-int check_type_sign(bool_t* isTypSign)
+int check_type_sign(bool_t* isTypSign, int *count_signed)
 {
 	int tok = getCurrentToken();
 	int sign = -1;
@@ -59,18 +59,18 @@ int check_type_sign(bool_t* isTypSign)
 	{
 		sign = tok;
 		*isTypSign = True;
+		*count_signed++;
 		checkEOF();
 		getNextToken();
 		return sign;
 	}
 	else
 	{
-		*isTypSign = False;
 		return -1;
 	}
 }
 
-int check_type_specifier(bool_t* isTypSpecf)
+int check_type_specifier(bool_t* isTypSpecf, int *count_spef)
 {
 	int tok = getCurrentToken();
 	int type = -1;
@@ -84,13 +84,13 @@ int check_type_specifier(bool_t* isTypSpecf)
 	{
 		type = tok;
 		*isTypSpecf = True;
+		*count_spef++;
 		checkEOF();
 		getNextToken();
 		return type;
 	}
 	else
 	{
-		*isTypSpecf = False;
 		return -1;
 	}
 
@@ -112,13 +112,43 @@ void declaration_specifiers()
 	bool_t isTypeSpecf = False;
 	bool_t isTypeQual = False;
 	int typ_sign = -1;
-	int stor_class = check_storage_class(&isStorage);
+	int stor_class = -1;
+	int typ_qual = -1;
+	int typ_specf = -1;
+	int count_signed = 0;
+	int count_stor = 0;
+	int count_qual = 0;
+	int count_spef = 0;
 
-	int typ_qual = check_type_qualifier(&isTypeQual);
+	while (
+		((stor_class = check_storage_class(&isStorage, &count_stor)) != -1) ||
+		((typ_qual = check_type_qualifier(&isTypeQual, &count_qual)) != -1) ||
+		((typ_sign = check_type_sign(&isTypeSign, &count_signed)) != -1) ||
+		((typ_specf = check_type_specifier(&isTypeSpecf, &count_spef)) != -1)
+		)
+	{
+		if (count_stor > 1)
+		{
+			printf("error: There can be a single class storage in declaration");
+			exit(0);
+		}
+		else if (count_qual > 1)
+		{
+			printf("error: There can be a single type qualifier in declaration");
+			exit(0);
+		}
+		else if (count_signed > 1)
+		{
+			printf("error: There can be a single signed/unsigned in declaration");
+			exit(0);
+		}
+		else if (count_spef > 1)
+		{
+			printf("error: There can be a single type specifier in declaration");
+			exit(0);
+		}
 
-	typ_sign = check_type_sign(&isTypeSign);
-
-	int typ_specf = check_type_specifier(&isTypeSpecf);
+	}
 
 	if (isStorage == False && isTypeQual == False && isTypeSpecf == False)
 	{
@@ -187,6 +217,7 @@ void direct_declarator()
 	bool_t isOpenArrayBrack = False;
 	bool_t isTypeQual = False;
 	int count_id = 0;
+	int count_qual = 0;
 	if (tok == ID || tok == '(' || tok == '[')
 	{
 		if (tok == ID)
@@ -207,7 +238,7 @@ void direct_declarator()
 			{
 				checkEOF();
 				getNextToken();
-				while (check_type_qualifier(&isTypeQual) != -1)
+				while (check_type_qualifier(&isTypeQual, &count_qual) != -1)
 				{
 					checkEOF();
 					getNextToken();
@@ -349,9 +380,10 @@ void declarator()
 {
 	int tok = getCurrentToken();
 	bool_t isTypeQual = False;
+	int count_qual = 0;
 	if (tok == '*')
 	{
-		while (check_type_qualifier(&isTypeQual) || tok == '*')
+		while (check_type_qualifier(&isTypeQual, &count_qual) || tok == '*')
 		{
 			checkEOF();
 			getNextToken();
@@ -466,6 +498,7 @@ void direct_abstract_declarator()
 {
 	bool_t isTypeQual = False;
 	int tok = getCurrentToken();
+	int count_qual = 0;
 	while (tok == '(' || tok == '[' || tok == ']' || tok == ')')
 	{
 
@@ -479,7 +512,7 @@ void direct_abstract_declarator()
 				{
 					checkEOF();
 					getNextToken();
-					while (check_type_qualifier(&isTypeQual))
+					while (check_type_qualifier(&isTypeQual, &count_qual))
 					{
 						checkEOF();
 						getNextToken();
@@ -542,11 +575,12 @@ void abstract_declarator()
 {
 	bool_t isTypeQual = False;
 	int tok = getCurrentToken();
+	int count_qual = 0;
 	if (tok == '*')
 	{
 		checkEOF();
 		getNextToken();
-		while (check_type_qualifier(&isTypeQual))
+		while (check_type_qualifier(&isTypeQual, &count_qual))
 		{
 			checkEOF();
 			getNextToken();
@@ -562,8 +596,10 @@ void specifier_qualifier_list()
 {
 	bool_t isTypeQual = False;
 	bool_t isTypeSpecf = False;
-	int typ_qual = check_type_qualifier(&isTypeQual);
-	int typ_specf = check_type_specifier(&isTypeSpecf);
+	int count_qual = 0;
+	int count_typespef = 0;
+	int typ_qual = check_type_qualifier(&isTypeQual, &count_qual);
+	int typ_specf = check_type_specifier(&isTypeSpecf, &count_typespef);
 	if (isTypeQual == False && isTypeSpecf == False)
 	{
 		printf("error: No type defined in declaration");

@@ -31,6 +31,12 @@ int expr_test(const char* loc)
 		printTree(expr);
 		free(expr);
 	}
+	else
+	{
+		printf("error: expression failed !\n");
+		exit(0);
+
+	}
 	free(tape);
 	resetToken();
 	//  printf("entire file length is :%d\n", file_length);
@@ -65,6 +71,11 @@ int dcl_test(const char* loc)
 	{
 		printf("Successful declaration !\n");
 	}
+	else
+	{
+		printf("error: declaration failed !\n");
+		exit(0);
+	}
 	free(tape);
 	resetToken();
 	//  printf("entire file length is :%d\n", file_length);
@@ -81,5 +92,9 @@ int main(int argc, char* argv[])
 	expr_test("C:\\MyWork\\prat4.c");
 
 	dcl_test("C:\\MyWork\\prat5.c");
+	dcl_test("C:\\MyWork\\prat6.c");
+	dcl_test("C:\\MyWork\\prat7.c");
+	dcl_test("C:\\MyWork\\prat8.c");
+
 
 }
