@@ -95,6 +95,7 @@ int main(int argc, char* argv[])
 	dcl_test("C:\\MyWork\\prat6.c");
 	dcl_test("C:\\MyWork\\prat7.c");
 	dcl_test("C:\\MyWork\\prat8.c");
+	dcl_test("C:\\MyWork\\prat9.c");
 
 
 }

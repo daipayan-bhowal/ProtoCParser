@@ -201,6 +201,7 @@ direct_declarator
 	| '[' ']'
 	| '(' parameter_type_list ')'
 	| '(' ')'
+	| '(' pointer IDENTIFIER ')'
 	| IDENTIFIER ';'
 	| IDENTIFIER '[' constant_expression ']' direct_declarator
 	| IDENTIFIER '[' ']' direct_declarator
@@ -234,11 +235,21 @@ void direct_declarator()
 		{
 			checkEOF();
 			getNextToken();
-			while (tok == '*')
+			tok = getCurrentToken();
+			if (tok == '*')
 			{
-				checkEOF();
-				getNextToken();
-				while (check_type_qualifier(&isTypeQual, &count_qual) != -1)
+				while (tok == '*')
+				{
+					checkEOF();
+					tok = getNextToken();
+				}
+				if (tok == ID)
+				{
+					count_id++;
+					checkEOF();
+					tok = getNextToken();
+				}
+				else if (check_type_qualifier(&isTypeQual, &count_qual) != -1)
 				{
 					checkEOF();
 					getNextToken();
@@ -249,7 +260,7 @@ void direct_declarator()
 			}
 			if (tok == ')')
 			{
-				direct_declarator();
+				
 				checkEOF();
 				getNextToken();
 				return;
@@ -383,10 +394,10 @@ void declarator()
 	int count_qual = 0;
 	if (tok == '*')
 	{
-		while (check_type_qualifier(&isTypeQual, &count_qual) || tok == '*')
+		while ((check_type_qualifier(&isTypeQual, &count_qual) != -1) || tok == '*')
 		{
-			checkEOF();
 			getNextToken();
+			tok = getCurrentToken();
 			//type_qualifier_list();
 			 //check for more type qualifiers
 		}
@@ -512,7 +523,7 @@ void direct_abstract_declarator()
 				{
 					checkEOF();
 					getNextToken();
-					while (check_type_qualifier(&isTypeQual, &count_qual))
+					while (check_type_qualifier(&isTypeQual, &count_qual) != -1)
 					{
 						checkEOF();
 						getNextToken();
@@ -580,7 +591,7 @@ void abstract_declarator()
 	{
 		checkEOF();
 		getNextToken();
-		while (check_type_qualifier(&isTypeQual, &count_qual))
+		while (check_type_qualifier(&isTypeQual, &count_qual) != -1)
 		{
 			checkEOF();
 			getNextToken();

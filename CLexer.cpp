@@ -741,7 +741,7 @@ KEYWORD:	 // start with keyword portion
 
 	start_pos = pos;
 	//last_pos = pos;
-	while (('a' <= at(str, pos) && at(str, pos) <= 'z'))
+	while ((('a' <= at(str, pos) && at(str, pos) <= 'z')) || ('_' == at(str, pos)))
 	{
 
 		// printf("keyword loop %c!\n", at(str, pos));
@@ -749,7 +749,7 @@ KEYWORD:	 // start with keyword portion
 		pos++;
 		*k = pos;
 	}
-	if (('a' <= at(str, start_pos) && at(str, start_pos) <= 'z') && (last_pos - start_pos) == 0) // single character identifier
+	if (((('a' <= at(str, start_pos) && at(str, start_pos) <= 'z')) || ('_' <= at(str, start_pos))) && (last_pos - start_pos) == 0) // single character identifier
 	{
 		return ID;
 	}
@@ -758,7 +758,7 @@ KEYWORD:	 // start with keyword portion
 		bool is_keyword = false;
 		//  printf("keyword hit! next char is %d\n", at(str, pos));
 		string_t string_id = partOfstring(str, start_pos, last_pos - start_pos+1);
-		printf("String fetched is:%s\n", c_string(string_id));
+		printf("KEYWORD: String fetched is:%s\n", c_string(string_id));
 		int token = keyword_check(string_id, &is_keyword);
 		switch (at(str, pos))
 		{
@@ -953,7 +953,7 @@ IDENTIFIER: // identifier section
 		bool is_keyword = false;
 		//printf("indentifier/keyword hit!\n");
 		string_t string_id = partOfstring(str, start_pos, pos - start_pos - 1);
-		printf("String fetched is:%s\n", c_string(string_id));
+		printf("IDENTIFIER: String fetched is:%s\n", c_string(string_id));
 		int token = keyword_check(string_id, &is_keyword);
 		switch (at(str, pos))
 		{
