@@ -86,16 +86,17 @@ int dcl_test(const char* loc)
 
 int main(int argc, char* argv[])
 {
-	expr_test("C:\\MyWork\\prat.c");
-	expr_test("C:\\MyWork\\prat2.c");
-	expr_test("C:\\MyWork\\prat3.c");
-	expr_test("C:\\MyWork\\prat4.c");
+	expr_test("C:\\MyWork\\expr1.c");
+	expr_test("C:\\MyWork\\expr2.c");
+	expr_test("C:\\MyWork\\expr3.c");
+	expr_test("C:\\MyWork\\expr4.c");
+    expr_test("C:\\MyWork\\expr5.c");
 
-	dcl_test("C:\\MyWork\\prat5.c");
-	dcl_test("C:\\MyWork\\prat6.c");
-	dcl_test("C:\\MyWork\\prat7.c");
-	dcl_test("C:\\MyWork\\prat8.c");
-	dcl_test("C:\\MyWork\\prat9.c");
+	dcl_test("C:\\MyWork\\dcl1.c");
+	dcl_test("C:\\MyWork\\dcl2.c");
+	dcl_test("C:\\MyWork\\dcl3.c");
+	dcl_test("C:\\MyWork\\dcl4.c");
+	dcl_test("C:\\MyWork\\dcl5.c");
 
 
 }
