@@ -816,6 +816,7 @@ TreeNode* unary_expression()
         }
         else
         {   
+            getNextToken();
             if (t2 != NULL)
             {
                 TreeNode *temp = primary_expression(&IsPrim);
