@@ -39,6 +39,15 @@ void debugOp(TreeNode *t)
         case STRLIT:
 			printf("STRLIT\n");
             break;
+		case ICONST:
+			printf("ICONST\n");
+			break;
+		case FCONST:
+			printf("FCONST\n");
+            break;
+		case CHARCONST:
+			printf("CHARCONST\n");
+			break;
         case OP:
            // printf("OP\n");
             switch (t->attrib.op)
