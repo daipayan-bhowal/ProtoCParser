@@ -804,8 +804,24 @@ TreeNode* unary_expression()
         }
         else
         {
-            printf("error: expected cast operator, not:%s !", getTokenString());
-            exit(0);
+
+            t = argument_expression_list();
+            if (t != NULL)
+            {
+                tok = getCurrentToken();
+                if (tok != ')')
+                {
+                    printf("error: expected ')' !\n");
+                    exit(0);
+                }
+                return t;
+            }
+            else
+            {
+                printf("error: expected cast operator, not:%s !", getTokenString());
+                exit(0);
+            }
+
         }
 
         tok = getCurrentToken();
