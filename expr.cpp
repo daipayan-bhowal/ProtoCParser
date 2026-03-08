@@ -17,7 +17,7 @@ void IsParseFailed(const char source_func[], int line)
     exit(0);
 
 }
-void CheckEOF(const char source_func[], int line)
+void FailOnEOF(const char source_func[], int line)
 {
     if (lookahead() == EOF)
     {
@@ -1071,9 +1071,11 @@ TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim_g)
         t2->child[0] = t;
         t2->attrib.op = OP_POSTINCR;
         t = t2;
-        checkEOF();
-        getNextToken();
+		// checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
         t->child[1] = NULL;
+        if (lookahead() == EOF)
+            return t;
+        getNextToken();
         return t;
 
     }
@@ -1084,9 +1086,11 @@ TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim_g)
         t2->child[0] = t;
         t2->attrib.op = OP_POSTDECR;
         t = t2;
-        checkEOF();
-        getNextToken();
+        // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
         t->child[1] = NULL;
+        if (lookahead() == EOF)
+            return t;
+        getNextToken();
         return t;
     }
     else {

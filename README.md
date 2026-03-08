@@ -14,10 +14,10 @@ https://github.com/daipayan-bhowal/DELex
 
 ## Usage
 
-create a file in C:\Mywork\prat.c<br>
-prat.c will have only 1 line of C expression, similarly create prat2.c, prat3.c, prat4.c, prat5.c<br>
+create a file in C:\Mywork\expr1.c<br>
+expr1.c will have only 1 line of C expression, similarly create expr2.c, expr3.c, expr4.c, expr5.c<br>
 
-prat.c
+expr1.c
 -------
 x / y % z + y
 
