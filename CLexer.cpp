@@ -441,6 +441,12 @@ START: // starting point of the code
 	case '-':
 	{
 		pos++;
+		if (at(str, pos) == '>')
+		{
+			pos++;
+			*k = pos;
+			return MEM_ARROW;
+		}
 		if (at(str, pos) == '=')
 		{
 			pos++;
@@ -1056,6 +1062,7 @@ int getNextToken()
 	token_struct_ptr->len = end_position - start_position;
 	token_struct_ptr->token_integerform = t;
 	token_struct_ptr->str_token = partOfstring(FileStrBuffer, start_position, token_struct_ptr->len);
+	printf("Token is:%s\n", token_struct_ptr->str_token->str);
 	token_struct_len++;
 	if (token_struct_ptr == NULL)
 		return EOF;

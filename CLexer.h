@@ -43,6 +43,7 @@
 #define OR_OR_OP 0x1018
 #define RIGHT_ASSIGN_OP 0x1019
 #define LEFT_ASSIGN_OP 0x1020
+#define MEM_ARROW 0x1021
 
 #define ID 0x2015
 #define STROBJ 0x2016

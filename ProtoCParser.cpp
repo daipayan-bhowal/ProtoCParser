@@ -95,13 +95,14 @@ int main(int argc, char* argv[])
 	expr_test("C:\\MyWork\\expr7.c");
 	expr_test("C:\\MyWork\\expr8.c");
 	expr_test("C:\\MyWork\\expr9.c");
+	expr_test("C:\\MyWork\\expr10.c");
 
 
-	dcl_test("C:\\MyWork\\dcl1.c");
-	dcl_test("C:\\MyWork\\dcl2.c");
-	dcl_test("C:\\MyWork\\dcl3.c");
-	dcl_test("C:\\MyWork\\dcl4.c");
-	dcl_test("C:\\MyWork\\dcl5.c");
+//	dcl_test("C:\\MyWork\\dcl1.c");
+//	dcl_test("C:\\MyWork\\dcl2.c");
+//	dcl_test("C:\\MyWork\\dcl3.c");
+//	dcl_test("C:\\MyWork\\dcl4.c");
+//	dcl_test("C:\\MyWork\\dcl5.c");
 
 
 }

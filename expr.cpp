@@ -1026,93 +1026,265 @@ TreeNode* unary_expression()
     return t;
 }
 
+/* 
+postfix_expression_dash:
+      '[' expression ']' postfix_expression_dash
+    | '(' argument_expression_list ')' postfix_expression_dash
+    | '.' IDENTIFIER postfix_expression_dash
+    | '->' IDENTIFIER postfix_expression_dash
+    | INC_OP postfix_expression_dash
+    | DEC_OP postfix_expression_dash
+
+postfix_expression
+    : primary_expression
+    | primary_expression '[' expression ']' postfix_expression_dash
+    | primary_expression(' argument_expression_list ')' postfix_expression_dash
+    | primary_expression '.' IDENTIFIER postfix_expression_dash
+    | primary_expression '->' IDENTIFIER postfix_expression_dash
+    | primary_expression INC_OP postfix_expression_dash
+    | primary_expression DEC_OP postfix_expression_dash
+*/
+
+TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
+{
+    TreeNode* t2 = NULL;
+    int tok = getCurrentToken();
+    if (tok == '[')
+    {
+            *IsPost = True;
+            t2 = newExpNode(OP);
+            
+            //  if(t->attrib.op == INT )
+            t2->attrib.op = OP_ARRAY;
+            checkEOF();
+            getNextToken();
+            t2->child[1] = expression();
+            //white_spaces();
+            if ((tok = getCurrentToken()) != ']')
+            {
+                IsParseFailed(__func__, __LINE__);
+            }
+            t2->child[0] = postfix_expression_dash(IsPost, OP_ARRAY);
+            return t2;
+            
+     }
+     else if (tok == '(') // Function caller parsing for expr like f(1)+f(3)
+        {
+            *IsPost = True;
+            t2 = newExpNode(CALLEXP);
+            // modification may be required for attrib
+            checkEOF();
+            getNextToken();
+            t2->child[1] = argument_expression_list(); // Need to modify in future
+            t2->child[0] = postfix_expression_dash(IsPost, OP_CALLER);
+            return t2;
+        }
+     else if(tok == '.')
+        {
+            *IsPost = True;
+            t2 = newExpNode(OP);
+            t2->attrib.op = OP_DOT;
+            checkEOF();
+            getNextToken();
+            if(tok == ID)
+			{
+                t2->child[1] = newExpNode(IDEN);
+                t2->child[0] = postfix_expression_dash(IsPost, OP_DOT);
+				return t2;
+			}
+			else
+			{
+				IsParseFailed(__func__, __LINE__);
+			}
+            
+
+        }
+      else if(tok == MEM_ARROW)
+        {
+            *IsPost = True;
+            t2 = newExpNode(OP);
+            t2->attrib.op = OP_ARROW_PTR;
+            checkEOF();
+            getNextToken();
+            
+            if (tok == ID)
+            {
+				t2->child[1] = newExpNode(IDEN);
+                t2->child[0] = postfix_expression_dash(IsPost, OP_ARROW_PTR);
+                return t2;
+            }
+            else
+            {
+                IsParseFailed(__func__, __LINE__);
+            }
+            
+
+        } 
+      else if (tok == INC_OP)
+        {
+            if (parentNodeType == OP_POSTINCR || parentNodeType == OP_POSTDECR)
+		    {
+		       printf("error: two consecutive post increment or decrement operators are not allowed !\n");
+			   IsParseFailed(__func__, __LINE__);
+               exit(0);
+            }
+            *IsPost = True;
+            t2 = newExpNode(OP);
+            
+            t2->attrib.op = OP_POSTINCR;
+            // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
+            t2->child[1] = NULL;
+            if (lookahead() == EOF)
+                return t2;
+            getNextToken();
+            t2->child[0] = postfix_expression_dash(IsPost, OP_POSTINCR);
+
+        }
+      else if (tok == DEC_OP)
+        {
+            if (parentNodeType == OP_POSTINCR || parentNodeType == OP_POSTDECR)
+            {
+               printf("error: two consecutive post increment or decrement operators are not allowed !\n");
+               IsParseFailed(__func__, __LINE__);
+               exit(0);
+            }
+            *IsPost = True;
+            t2 = newExpNode(OP);
+            t2->attrib.op = OP_POSTDECR;
+            // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
+            t2->child[1] = NULL;
+            if (lookahead() == EOF)
+                return t2;
+            getNextToken();
+            t2->child[0] = postfix_expression_dash(IsPost, OP_POSTDECR);
+        }
+    return t2;
+
+}
+
 TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim_g)
 {
     printf("frame: %s tok:%d tok_str:%s\n", __func__, getCurrentToken(), getTokenString()->str);
     //white_spaces();
     TreeNode* t;
     TreeNode* t2;
+    int tok;
     bool_t IsPrim = False;
     t = primary_expression(&IsPrim);
 	*IsPrim_g = IsPrim;
 
     //white_spaces();
     //   return TRUE; 
-    int tok = getCurrentToken();
-    if (tok == '[')
-    {
-        *IsPost = True;
-        t2 = newExpNode(OP);
-        t2->child[0] = t;
-        //  if(t->attrib.op == INT )
-        t2->attrib.op = OP_ARRAY;
-        t = t2;
-        checkEOF();
-        getNextToken();
-        t->child[1] = expression();
-        //white_spaces();
-        if ((tok = getCurrentToken()) != ']')
+        tok = getCurrentToken();
+        if (tok == '[')
         {
-            IsParseFailed(__func__, __LINE__);
+            *IsPost = True;
+            t2 = newExpNode(OP);
+            t2->child[0] = t;
+            //  if(t->attrib.op == INT )
+            t2->attrib.op = OP_ARRAY;
+            checkEOF();
+            getNextToken();
+            t2->child[1] = expression();
+            //white_spaces();
+            if ((tok = getCurrentToken()) != ']')
+            {
+                IsParseFailed(__func__, __LINE__);
+            }
+			t2->child[2] = postfix_expression_dash(IsPost, OP_ARRAY);
+            return t2;
         }
-        return t;
-    }
-    else if (tok == '(') // Function caller parsing for expr like f(1)+f(3)
-    {
-        *IsPost = True;
-        t2 = newExpNode(CALLEXP);
-        t2->child[0] = t;
-        // modification may be required for attrib
-        t = t2;
-        checkEOF();
-        getNextToken();
-        t2->child[1] = argument_expression_list(); // Need to modify in future
-        return t2;
-    }
-    /* else if(optional_expect('.')) // structure not supported for now!
-       {
+        else if (tok == '(') // Function caller parsing for expr like f(1)+f(3)
+        {
+            *IsPost = True;
+            t2 = newExpNode(CALLEXP);
+            t2->child[0] = t;
+            t2->attrib.op = OP_CALLER;
+            // modification may be required for attrib
+            checkEOF();
+            getNextToken();
+            t2->child[1] = argument_expression_list(); // Need to modify in future
+			t2->child[2] = postfix_expression_dash(IsPost, OP_CALLER);
+            return t2;
+        }
+        else if (tok == '.')
+        {
+            *IsPost = True;
+            t2 = newExpNode(OP);
+            t2->child[0] = t;
+            t2->attrib.op = OP_DOT;
+            checkEOF();
+            getNextToken();
+            if (tok == ID)
+            {
+                t2->child[1] = newExpNode(IDEN);
+                t2->child[2] = postfix_expression_dash(IsPost, OP_DOT);
+                return t2;
+            }
+            else
+            {
+                IsParseFailed(__func__, __LINE__);
+            }
 
-       }
-       else if(match("->"))
-       {
-               if(is_id())
-               {
 
-               }
-       } */
-    else if (tok == INC_OP)
-    {
-        *IsPost = True;
-        t2 = newExpNode(OP);
-        t2->child[0] = t;
-        t2->attrib.op = OP_POSTINCR;
-        t = t2;
-		// checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
-        t->child[1] = NULL;
-        if (lookahead() == EOF)
-            return t;
-        getNextToken();
-        return t;
+        }
+        else if (tok == MEM_ARROW)
+        {
+            *IsPost = True;
+            t2 = newExpNode(OP);
+            t2->child[0] = t;
+            t2->attrib.op = OP_ARROW_PTR;
+            checkEOF();
+            getNextToken();
 
-    }
-    else if (tok == DEC_OP)
-    {
-        *IsPost = True;
-        t2 = newExpNode(OP);
-        t2->child[0] = t;
-        t2->attrib.op = OP_POSTDECR;
-        t = t2;
-        // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
-        t->child[1] = NULL;
-        if (lookahead() == EOF)
-            return t;
-        getNextToken();
-        return t;
-    }
-    else {
-        if (IsPrim == True)
-            return t;
-    }
+            if (tok == ID)
+            {
+                t2->child[1] = newExpNode(IDEN);
+                t2->child[2] = postfix_expression_dash(IsPost, OP_ARROW_PTR);
+                return t2;
+            }
+            else
+            {
+                IsParseFailed(__func__, __LINE__);
+            }
+
+
+        }
+        else if (tok == INC_OP)
+        {
+            *IsPost = True;
+            t2 = newExpNode(OP);
+            t2->child[0] = t;
+            t2->attrib.op = OP_POSTINCR;
+            // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
+            t2->child[1] = NULL;
+            if (lookahead() == EOF)
+                return t2;
+            getNextToken();
+            t2->child[2] = postfix_expression_dash(IsPost, OP_POSTINCR);
+            return t2;
+
+        }
+        else if (tok == DEC_OP)
+        {
+            *IsPost = True;
+            t2 = newExpNode(OP);
+            t2->child[0] = t;
+            t2->attrib.op = OP_POSTDECR;
+            // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
+            t2->child[1] = NULL;
+            if (lookahead() == EOF)
+                return t2;
+            getNextToken();
+            t2->child[2] = postfix_expression_dash(IsPost, OP_POSTDECR);
+            return t2;
+        }
+        else if (IsPrim == True)
+        {
+            
+                return t;
+        }
+    
     return NULL;
 }
 

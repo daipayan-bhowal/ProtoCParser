@@ -60,7 +60,10 @@ typedef enum
     OP_FLOAT_CAST,
     OP_CHAR_CAST,
     OP_DOUBLE_CAST,
-    OP_COMMA
+    OP_COMMA,
+    OP_ARROW_PTR,
+    OP_DOT,
+    OP_CALLER
 } OpTokenType;
 
 typedef enum
