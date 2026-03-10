@@ -25,7 +25,27 @@ void FailOnEOF(const char source_func[], int line)
     }
 }
 
-
+void checkNextTokenIsNotPrim()
+{
+    int token = getCurrentToken();
+    if (token == ID ||
+        token == STROBJ ||
+        token == HEXADECI_CONST ||
+        token == OCTAL_CONST ||
+        token == USIGN_INT_CONST ||
+        token == INT_CONST ||
+        token == LONG_INT_CONST ||
+        token == F_CONST ||
+        token == LONG_DOUBLE_CONST ||
+        token == E_F_CONST ||
+        token == CHAR_CONST ||
+        token == ESCAPE_SEQ_CONST
+        )
+    {
+        printf("error: wrong expression, primary expr cannot come after primary expr!");
+        exit(0);
+    }
+}
 
 TreeNode* primary_expression(bool_t* IsPrim)
 {
@@ -84,6 +104,7 @@ TreeNode* primary_expression(bool_t* IsPrim)
         if (lookahead() == EOF)
             return t;
         getNextToken();
+        checkNextTokenIsNotPrim();
     }
     else if (token == ID)
     {
@@ -95,6 +116,7 @@ TreeNode* primary_expression(bool_t* IsPrim)
         if (lookahead() == EOF)
             return t;
         getNextToken();
+        checkNextTokenIsNotPrim();
 
     }
     else if (token == STROBJ)
@@ -107,6 +129,7 @@ TreeNode* primary_expression(bool_t* IsPrim)
         if (lookahead() == EOF)
             return t;
         getNextToken();
+        checkNextTokenIsNotPrim();
     }
     else if (token == '(')
     {

@@ -96,6 +96,7 @@ int main(int argc, char* argv[])
 	expr_test("C:\\MyWork\\expr8.c");
 	expr_test("C:\\MyWork\\expr9.c");
 	expr_test("C:\\MyWork\\expr10.c");
+	expr_test("C:\\MyWork\\expr11.c");
 
 
 //	dcl_test("C:\\MyWork\\dcl1.c");
