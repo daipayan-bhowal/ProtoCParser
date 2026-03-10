@@ -1046,7 +1046,7 @@ void setStringBuffer(string_t string_buf) {
 
 
 static int current_pos = 0;
-int getNextToken()
+int _getNextToken(const char source_func[], int line)
 {
 	
 	int start_position = 0, end_position = 0;
@@ -1112,7 +1112,7 @@ void init_tokenizer(string_t string_file)
 	token_struct_ptr = (struct Token*)malloc(sizeof(struct Token));
 	token_struct_len = 1;
 	setStringBuffer(string_file);
-	getNextToken();
+	_getNextToken(__func__,__LINE__);
 }
 bool_t MarkEndOfFile(bool_t IsMark)
 {

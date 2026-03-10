@@ -109,7 +109,7 @@ int keyword_check(string_t str, bool* is_keyword);
 int getTokenByPos(string_t str, int* k);
 void setStringBuffer(string_t string_buf);
 int getCurrentToken();
-int getNextToken();
+int _getNextToken(const char source_func[], int line);
 void resetToken();
 string_t getTokenString();
 int getTokenPos();

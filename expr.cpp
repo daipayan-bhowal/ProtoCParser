@@ -852,14 +852,13 @@ TreeNode* unary_expression()
         t = t2;
         checkEOF();
         getNextToken();
-        if ((t2->child[0] = expression()) == NULL)
+        if ((t->child[0] = expression()) == NULL)
         {
             printf("error: No postfix id found !\n");
             IsParseFailed(__func__, __LINE__);
         }
-
         t->child[1] = NULL;
-
+        return t;
     }
     if (tok == DEC_OP)
     {
@@ -869,13 +868,13 @@ TreeNode* unary_expression()
         t->child[1] = NULL;
         checkEOF();
         getNextToken();
-        if ((t2->child[0] = expression()) == NULL)
+        if ((t->child[0] = expression()) == NULL)
         {
             printf("error: No postfix id found !\n");
             IsParseFailed(__func__, __LINE__);
         }
 
-
+        return t;
 
     }
     else if (tok == '+')
@@ -893,6 +892,7 @@ TreeNode* unary_expression()
         }
 
         t->child[1] = NULL;
+        return t;
     }
     else  if (tok == '-')
     {
@@ -908,6 +908,7 @@ TreeNode* unary_expression()
         }
 
         t->child[1] = NULL;
+        return t;
 
     }
     else if (tok == '&')
@@ -924,7 +925,7 @@ TreeNode* unary_expression()
         }
 
         t->child[1] = NULL;
-
+        return t;
 
     }
     else if (tok == '*')
@@ -941,6 +942,7 @@ TreeNode* unary_expression()
         }
 
         t->child[1] = NULL;
+        return t;
 
     }
     else if (tok == '~')
@@ -958,6 +960,7 @@ TreeNode* unary_expression()
         }
 
         t->child[1] = NULL;
+        return t;
 
     }
     else if (tok == '!')
@@ -976,6 +979,7 @@ TreeNode* unary_expression()
         }
 
         t->child[1] = NULL;
+        return t;
 
     }
     else if (tok == SIZEOF)
@@ -999,6 +1003,7 @@ TreeNode* unary_expression()
                 printf("error: sizeof doesn't have ')' !");
                 IsParseFailed(__func__, __LINE__);
             }
+            return t;
         }
         else
         {
@@ -1008,7 +1013,7 @@ TreeNode* unary_expression()
                 printf("error: sizeof doesn't have operand !");
                 exit(0);
             }
-
+            return t;
         }
 
     }
@@ -1058,13 +1063,13 @@ TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
             t2->attrib.op = OP_ARRAY;
             checkEOF();
             getNextToken();
-            t2->child[1] = expression();
+            t2->child[0] = expression();
             //white_spaces();
             if ((tok = getCurrentToken()) != ']')
             {
                 IsParseFailed(__func__, __LINE__);
             }
-            t2->child[0] = postfix_expression_dash(IsPost, OP_ARRAY);
+            t2->child[1] = postfix_expression_dash(IsPost, OP_ARRAY);
             return t2;
             
      }
@@ -1075,8 +1080,8 @@ TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
             // modification may be required for attrib
             checkEOF();
             getNextToken();
-            t2->child[1] = argument_expression_list(); // Need to modify in future
-            t2->child[0] = postfix_expression_dash(IsPost, OP_CALLER);
+            t2->child[0] = argument_expression_list(); // Need to modify in future
+            t2->child[1] = postfix_expression_dash(IsPost, OP_CALLER);
             return t2;
         }
      else if(tok == '.')
@@ -1088,8 +1093,8 @@ TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
             getNextToken();
             if(tok == ID)
 			{
-                t2->child[1] = newExpNode(IDEN);
-                t2->child[0] = postfix_expression_dash(IsPost, OP_DOT);
+                t2->child[0] = newExpNode(IDEN);
+                t2->child[1] = postfix_expression_dash(IsPost, OP_DOT);
 				return t2;
 			}
 			else
@@ -1109,8 +1114,8 @@ TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
             
             if (tok == ID)
             {
-				t2->child[1] = newExpNode(IDEN);
-                t2->child[0] = postfix_expression_dash(IsPost, OP_ARROW_PTR);
+				t2->child[0] = newExpNode(IDEN);
+                t2->child[1] = postfix_expression_dash(IsPost, OP_ARROW_PTR);
                 return t2;
             }
             else
@@ -1133,11 +1138,11 @@ TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
             
             t2->attrib.op = OP_POSTINCR;
             // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
-            t2->child[1] = NULL;
+            t2->child[0] = NULL;
             if (lookahead() == EOF)
                 return t2;
             getNextToken();
-            t2->child[0] = postfix_expression_dash(IsPost, OP_POSTINCR);
+            t2->child[1] = postfix_expression_dash(IsPost, OP_POSTINCR);
 
         }
       else if (tok == DEC_OP)
@@ -1152,11 +1157,11 @@ TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
             t2 = newExpNode(OP);
             t2->attrib.op = OP_POSTDECR;
             // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
-            t2->child[1] = NULL;
+            t2->child[0] = NULL;
             if (lookahead() == EOF)
                 return t2;
             getNextToken();
-            t2->child[0] = postfix_expression_dash(IsPost, OP_POSTDECR);
+            t2->child[1] = postfix_expression_dash(IsPost, OP_POSTDECR);
         }
     return t2;
 

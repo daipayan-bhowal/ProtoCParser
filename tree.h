@@ -151,6 +151,7 @@ void debugOp(TreeNode *t);
 void IsParseFailed(const char source_func[], int line);
 void FailOnEOF(const char source_func[], int line);
 #define checkEOF() FailOnEOF(__func__,__LINE__)
+#define getNextToken() _getNextToken(__func__,__LINE__)
 
 /* Based on K & R C book modified grammer */
 TreeNode* primary_expression(bool_t* IsPrim);
