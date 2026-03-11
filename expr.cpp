@@ -334,17 +334,22 @@ TreeNode* assignment_expression()
 TreeNode* conditional_expression()
 {
     printf("frame: %s tok:%d tok_str:%s\n", __func__, getCurrentToken(), getTokenString()->str);
-    TreeNode* t = newStmtNode(If);
-    t->child[0] = logical_OR_expression();
+    TreeNode* t = NULL,*t2= NULL,*t3= NULL;
+    t3 = logical_OR_expression();
 
     //white_spaces();
     int tok = getCurrentToken();
     if (tok == '?')
     {
+        t = newStmtNode(If);
+        t2 = newStmtNode(Else);
+
+        t->child[0] = t3;
+
         //white_spaces();
         checkEOF();
         getNextToken();
-        t->child[1] = logical_OR_expression();
+        t->child[1] = expression();
 
         //white_spaces();
 
@@ -357,10 +362,14 @@ TreeNode* conditional_expression()
         checkEOF();
         getNextToken();
         //white_spaces();
-        t->child[2] = logical_OR_expression();
+        t2->child[0] = conditional_expression();
+        //t2->child[0] = t3;
+        t->child[2] = t2;
+        
+        return t;
 
     }
-    return t;
+    return t3;
 }
 TreeNode* logical_OR_expression()
 {

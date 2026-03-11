@@ -63,7 +63,8 @@ typedef enum
     OP_COMMA,
     OP_ARROW_PTR,
     OP_DOT,
-    OP_CALLER
+    OP_CALLER,  // function caller , i.e  x = f(i) + g(i);
+	OP_TERN // for ternary operator ?
 } OpTokenType;
 
 typedef enum
@@ -78,6 +79,7 @@ typedef enum
 typedef enum
 {
     If = 1,
+    Else,
     While,
     Switch,
     Do,
@@ -85,7 +87,9 @@ typedef enum
     Label,
     Goto,
     Break,
+    Case,
     Return,
+    Default,
     Continue
 } StmtType;
 

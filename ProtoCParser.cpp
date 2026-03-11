@@ -83,27 +83,34 @@ int dcl_test(const char* loc)
 
 	return 0;
 }
-
-int main(int argc, char* argv[])
+void test_all_expr_TC()
 {
+
 	expr_test("C:\\MyWork\\expr1.c");
 	expr_test("C:\\MyWork\\expr2.c");
 	expr_test("C:\\MyWork\\expr3.c");
 	expr_test("C:\\MyWork\\expr4.c");
-    expr_test("C:\\MyWork\\expr5.c");
+	expr_test("C:\\MyWork\\expr5.c");
 	expr_test("C:\\MyWork\\expr6.c");
 	expr_test("C:\\MyWork\\expr7.c");
 	expr_test("C:\\MyWork\\expr8.c");
 	expr_test("C:\\MyWork\\expr9.c");
 	expr_test("C:\\MyWork\\expr10.c");
 	expr_test("C:\\MyWork\\expr11.c");
+	expr_test("C:\\MyWork\\expr12.c");
+}
 
+void test_all_dcl_TC()
+{
+	dcl_test("C:\\MyWork\\dcl1.c");
+	dcl_test("C:\\MyWork\\dcl2.c");
+	dcl_test("C:\\MyWork\\dcl3.c");
+	dcl_test("C:\\MyWork\\dcl4.c");
+	dcl_test("C:\\MyWork\\dcl5.c");
+}
 
-//	dcl_test("C:\\MyWork\\dcl1.c");
-//	dcl_test("C:\\MyWork\\dcl2.c");
-//	dcl_test("C:\\MyWork\\dcl3.c");
-//	dcl_test("C:\\MyWork\\dcl4.c");
-//	dcl_test("C:\\MyWork\\dcl5.c");
-
-
+int main(int argc, char* argv[])
+{
+	test_all_expr_TC();
+	test_all_dcl_TC();
 }

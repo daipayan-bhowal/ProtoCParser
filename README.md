@@ -131,14 +131,22 @@ primary-expression:<br>
     string-literal<br>
     ( expression )<br>
 
-postfix-expression:<br>
-    primary-expression<br>
-    primary-expression [ expression ]<br>
-    primary-expression ( argument-expression-list_opt )<br>
-    primary-expression . identifier<br>
-    primary-expression -> identifier<br>
-    primary-expression ++<br>
-    primary-expression --<br>
+postfix_expression_dash<br>
+     :'[' expression ']' postfix_expression_dash<br>
+	 | '(' argument_expression_list ')' postfix_expression_dash<br>
+	 | '.' IDENTIFIER postfix_expression_dash<br>
+	 | '->' IDENTIFIER postfix_expression_dash<br>
+	 | INC_OP postfix_expression_dash<br>
+	 | DEC_OP postfix_expression_dash<br>
+	 
+postfix_expression<br>
+   :  primary_expression<br>
+	| primary_expression '[' expression ']' postfix_expression_dash<br>
+	| primary_expression (' argument_expression_list ')' postfix_expression_dash<br>
+	| primary_expression '.' IDENTIFIER postfix_expression_dash<br>
+	| primary_expression '->' IDENTIFIER postfix_expression_dash<br>
+	| primary_expression INC_OP postfix_expression_dash<br>
+	| primary_expression DEC_OP postfix_expression_dash<br>
 
 unary-expression:<br>
     postfix-expression<br> 

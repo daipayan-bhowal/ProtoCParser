@@ -224,6 +224,45 @@ void debugOp(TreeNode *t)
         }
 
     }
+    else if(t->nodeType == Stmt)
+	{
+		switch (t->Type.stmt)
+		{
+		case If:
+			printf("IF\n");
+			break;
+        case Else:
+            printf("ELSE\n");
+            break;
+		case While:
+			printf("WHILE\n");
+			break;
+		case Do:
+			printf("DOWHILE\n");
+			break;
+		case For:
+			printf("FOR\n");
+			break;
+		case Switch:
+			printf("SWITCH\n");
+			break;
+		case Case:
+			printf("CASE\n");
+			break;
+		case Default:
+			printf("DEFAULT\n");
+			break;
+		case Break:
+			printf("BREAK\n");
+			break;
+		case Continue:
+			printf("CONTINUE\n");
+			break;
+		case Return:
+			printf("RETURN\n");
+			break;
+		}
+	}
 }
 
 void printTree(TreeNode* t)
