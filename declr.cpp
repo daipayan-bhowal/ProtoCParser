@@ -196,21 +196,107 @@ void declaration_specifiers()
 
 
 /*   
+direct_declarator_dash
+	: ';'
+	| '[' constant_expression ']' direct_declarator_dash
+	| '[' ']' direct_declarator_dash
+	| '(' parameter_type_list ')' direct_declarator_dash
+	| '(' ')' direct_declarator_dash
+	| '(' pointer IDENTIFIER ')' direct_declarator_dash
 direct_declarator
-	: '[' constant_expression ']'
-	| '[' ']'
-	| '(' parameter_type_list ')'
-	| '(' ')'
-	| '(' pointer IDENTIFIER ')'
-	| IDENTIFIER ';'
-	| IDENTIFIER '[' constant_expression ']' direct_declarator
+	:  IDENTIFIER 
+	| IDENTIFIER '[' constant_expression ']' direct_declarator_dash
 	| IDENTIFIER '[' ']' direct_declarator
-	| IDENTIFIER '(' parameter_type_list ')' direct_declarator
-	| IDENTIFIER '(' identifier_list ')' direct_declarator
-	| IDENTIFIER '(' ')' direct_declarator
-	| '(' pointer direct_declarator ')' direct_declarator
+	| IDENTIFIER '(' parameter_type_list ')' direct_declarator_dash
+	| IDENTIFIER '(' identifier_list ')' direct_declarator_dash
+	| IDENTIFIER '(' ')' direct_declarator_dash
+	| '(' pointer direct_declarator ')' direct_declarator_dash
 
 */
+
+void direct_declarator_dash()
+{
+	bool_t isTypeQual = False;
+	int count_qual = 0;
+	int tok = getCurrentToken();
+	if (tok == ';')
+	{
+		return;
+	}
+	if (tok == '[')
+	{
+		checkEOF();
+		getNextToken();
+		if (tok == ']')
+		{
+			checkEOF();
+			getNextToken();
+			direct_declarator_dash();
+			return;
+		}
+		else
+		{
+			expression();
+			if (tok != ']')
+			{
+				printf("error: expected ']' !\n");
+				exit(0);
+			}
+			else
+			{
+				checkEOF();
+				getNextToken();
+			}
+			direct_declarator_dash();
+			return;
+		}
+		
+
+	}
+	else if (tok == '(')
+	{
+		checkEOF();
+		getNextToken();
+		tok = getCurrentToken();
+		if (tok == ')')
+		{
+			checkEOF();
+			getNextToken();
+			direct_declarator_dash();
+			return;
+		}
+		else if (tok == '*')
+		{
+			while (tok == '*')
+			{
+				checkEOF();
+				tok = getNextToken();
+			}
+			if (tok == ID)
+			{
+				checkEOF();
+				tok = getNextToken();
+			}
+			else if (check_type_qualifier(&isTypeQual, &count_qual) != -1)
+			{
+				checkEOF();
+				getNextToken();
+				//type_qualifier_list();
+				 //check for more type qualifiers
+			}
+
+		}
+		if (tok == ')')
+		{
+
+			checkEOF();
+			getNextToken();
+			direct_declarator_dash();
+			return;
+		}
+		
+	}
+}
 void direct_declarator()
 {
 	int tok = getCurrentToken();
@@ -226,8 +312,6 @@ void direct_declarator()
 			checkEOF();
 			getNextToken();
 			count_id++;
-			if (tok == ';')
-				return;
 		}
 
 
@@ -236,7 +320,15 @@ void direct_declarator()
 			checkEOF();
 			getNextToken();
 			tok = getCurrentToken();
-			if (tok == '*')
+			if (tok == ')')
+			{
+
+				checkEOF();
+				getNextToken();
+				direct_declarator_dash();
+				return;
+			}
+			else if (tok == '*')
 			{
 				while (tok == '*')
 				{
@@ -257,15 +349,21 @@ void direct_declarator()
 					 //check for more type qualifiers
 				}
 
+
+
 			}
-			if (tok == ')')
+			if (tok != ')')
 			{
-				
+				printf("error: expected ']' !\n");
+				exit(0);
+			}
+			else
+			{
 				checkEOF();
 				getNextToken();
-				return;
 			}
 
+			
 		}
 		else if (tok == '[')
 		{
@@ -291,85 +389,11 @@ void direct_declarator()
 					getNextToken();
 				}
 			}
+			direct_declarator_dash();
 		}
 	}
 
-	while (count_id > 1 && tok != '(' && tok != '[' && tok != ')' && tok != ']')
-	{
-		checkEOF();
-		getNextToken();
-		if (tok == '(' && isOpenBraces == False)
-		{
-			isOpenBraces = True;
-			checkEOF();
-			getNextToken();
-			if (tok == ')')
-			{
-				isOpenBraces = False;
-				checkEOF();
-				getNextToken();
-			}
-			else
-			{
-				while (tok == ID || tok == ELIPPSIS)
-				{
-					checkEOF();
-					getNextToken();
-					if (tok == ',')
-					{
-						checkEOF();
-						getNextToken();
-					}
-					else
-						break;
-
-				}
-				if (tok != ')')
-				{
-					printf("error: expected ')' !\n");
-					exit(0);
-				}
-				else
-				{
-					isOpenArrayBrack = False;
-					checkEOF();
-					getNextToken();
-				}
-
-			}
-
-		}
-		else if (tok == '[' && isOpenArrayBrack == False)
-		{
-			isOpenArrayBrack = True;
-			checkEOF();
-			getNextToken();
-			if (tok == ']')
-			{
-				isOpenArrayBrack = False;
-				checkEOF();
-				getNextToken();
-
-				
-			}
-			else
-			{
-				expression();
-				if (tok != ']')
-				{
-					printf("error: expected ']' !\n");
-					exit(0);
-				}
-				else
-				{
-					isOpenArrayBrack = False;
-					checkEOF();
-					getNextToken();
-				}
-			}
 	
-		}
-	}
 	if (count_id < 1)
 	{
 		printf("error: expected identifier !\n");

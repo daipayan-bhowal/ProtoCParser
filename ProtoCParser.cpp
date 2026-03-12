@@ -83,9 +83,8 @@ int dcl_test(const char* loc)
 
 	return 0;
 }
-void test_all_expr_TC()
+void test_all_expr_TC_file()
 {
-
 	expr_test("C:\\MyWork\\expr1.c");
 	expr_test("C:\\MyWork\\expr2.c");
 	expr_test("C:\\MyWork\\expr3.c");
@@ -98,6 +97,7 @@ void test_all_expr_TC()
 	expr_test("C:\\MyWork\\expr10.c");
 	expr_test("C:\\MyWork\\expr11.c");
 	expr_test("C:\\MyWork\\expr12.c");
+	expr_test("C:\\MyWork\\expr13.c");
 }
 
 void test_all_dcl_TC()
@@ -111,6 +111,6 @@ void test_all_dcl_TC()
 
 int main(int argc, char* argv[])
 {
-	test_all_expr_TC();
+	test_all_expr_TC_file();
 	test_all_dcl_TC();
 }
