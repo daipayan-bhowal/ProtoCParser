@@ -194,6 +194,25 @@ void declaration_specifiers()
 	return;
 }
 
+void type_specifier_list(bool_t *IsTypSpefList)
+{
+	int tok = getCurrentToken();
+	int count_spef = 0;
+	bool_t isTypeSpecf = False;
+	*IsTypSpefList = False;
+	if(tok == check_type_specifier(&isTypeSpecf, &count_spef))
+	{
+		if (isTypeSpecf == True)
+		*IsTypSpefList = True;
+	}
+	if (tok == ',' && isTypeSpecf == True)
+	{
+		checkEOF();
+		getNextToken();
+		type_specifier_list(IsTypSpefList);
+	}
+
+}
 
 /*   
 direct_declarator_dash
@@ -219,6 +238,8 @@ void direct_declarator_dash()
 	bool_t isTypeQual = False;
 	int count_qual = 0;
 	int tok = getCurrentToken();
+	bool_t IsDcl = False;
+	bool_t IsTypSpef = False;
 	if (tok == ';')
 	{
 		return;
@@ -286,6 +307,7 @@ void direct_declarator_dash()
 			}
 
 		}
+		
 		if (tok == ')')
 		{
 
@@ -294,6 +316,25 @@ void direct_declarator_dash()
 			direct_declarator_dash();
 			return;
 		}
+		else 
+		{
+			type_specifier_list(&IsTypSpef);
+			tok = getCurrentToken();
+			if (IsTypSpef == True && tok == ')')
+			{
+				checkEOF();
+				getNextToken();
+				direct_declarator_dash();
+                return;
+			}
+			else
+			{
+				declaration(&IsDcl);
+			}
+			
+
+		}
+
 		
 	}
 }
@@ -362,7 +403,7 @@ void direct_declarator()
 				checkEOF();
 				getNextToken();
 			}
-
+			direct_declarator_dash();
 			
 		}
 		else if (tok == '[')

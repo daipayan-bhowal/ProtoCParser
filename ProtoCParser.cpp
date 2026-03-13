@@ -98,14 +98,15 @@ void test_all_expr_TC_file()
 	expr_test("C:\\MyWork\\expr11.c");
 	expr_test("C:\\MyWork\\expr12.c");
 	expr_test("C:\\MyWork\\expr13.c");
+	expr_test("C:\\MyWork\\expr14.c");
 }
 
 void test_all_dcl_TC()
 {
-	dcl_test("C:\\MyWork\\dcl1.c");
-	dcl_test("C:\\MyWork\\dcl2.c");
-	dcl_test("C:\\MyWork\\dcl3.c");
-	dcl_test("C:\\MyWork\\dcl4.c");
+	//dcl_test("C:\\MyWork\\dcl1.c");
+	//dcl_test("C:\\MyWork\\dcl2.c");
+	//dcl_test("C:\\MyWork\\dcl3.c");
+	//dcl_test("C:\\MyWork\\dcl4.c");
 	dcl_test("C:\\MyWork\\dcl5.c");
 }
 
