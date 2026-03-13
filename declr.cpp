@@ -219,15 +219,16 @@ direct_declarator_dash
 	: ';'
 	| '[' constant_expression ']' direct_declarator_dash
 	| '[' ']' direct_declarator_dash
-	| '(' parameter_type_list ')' direct_declarator_dash
+	| '(' type_specifier_list ')' direct_declarator_dash
+	| '(' declaration ')' direct_declarator_dash
 	| '(' ')' direct_declarator_dash
 	| '(' pointer IDENTIFIER ')' direct_declarator_dash
 direct_declarator
 	:  IDENTIFIER 
 	| IDENTIFIER '[' constant_expression ']' direct_declarator_dash
 	| IDENTIFIER '[' ']' direct_declarator
-	| IDENTIFIER '(' parameter_type_list ')' direct_declarator_dash
-	| IDENTIFIER '(' identifier_list ')' direct_declarator_dash
+	| IDENTIFIER '(' declaration ')' direct_declarator_dash
+	| IDENTIFIER '(' type_specifier_list ')' direct_declarator_dash
 	| IDENTIFIER '(' ')' direct_declarator_dash
 	| '(' pointer direct_declarator ')' direct_declarator_dash
 

@@ -107,7 +107,8 @@ void test_all_dcl_TC()
 	//dcl_test("C:\\MyWork\\dcl2.c");
 	//dcl_test("C:\\MyWork\\dcl3.c");
 	//dcl_test("C:\\MyWork\\dcl4.c");
-	dcl_test("C:\\MyWork\\dcl5.c");
+	//dcl_test("C:\\MyWork\\dcl5.c");
+	//dcl_test("C:\\MyWork\\dcl6.c");
 }
 
 int main(int argc, char* argv[])
