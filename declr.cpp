@@ -224,7 +224,8 @@ direct_declarator_dash
 	| '(' ')' direct_declarator_dash
 	| '(' pointer IDENTIFIER ')' direct_declarator_dash
 direct_declarator
-	:  IDENTIFIER 
+	: 
+	| IDENTIFIER 
 	| IDENTIFIER '[' constant_expression ']' direct_declarator_dash
 	| IDENTIFIER '[' ']' direct_declarator
 	| IDENTIFIER '(' declaration ')' direct_declarator_dash
@@ -347,6 +348,24 @@ void direct_declarator()
 	bool_t isTypeQual = False;
 	int count_id = 0;
 	int count_qual = 0;
+	if (tok == '*')
+	{
+		while (tok == '*')
+		{
+			checkEOF();
+			getNextToken();
+			while (check_type_qualifier(&isTypeQual, &count_qual) != -1)
+			{
+				checkEOF();
+				getNextToken();
+				//type_qualifier_list();
+				 //check for more type qualifiers
+			}
+		}
+	}
+	isTypeQual = False;
+	count_id = 0;
+
 	if (tok == ID || tok == '(' || tok == '[')
 	{
 		if (tok == ID)
@@ -433,14 +452,21 @@ void direct_declarator()
 			}
 			direct_declarator_dash();
 		}
+		if (count_id < 1)
+		{
+			printf("error: expected identifier !\n");
+			exit(0);
+		}
 	}
-
-	
-	if (count_id < 1)
+	else if (tok == ')' || tok == ']')
 	{
-		printf("error: expected identifier !\n");
+		printf("error: declaration syntax is not correct !\n");
 		exit(0);
 	}
+
+
+	
+
 }
 /*
 pointer
