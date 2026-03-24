@@ -80,7 +80,8 @@ int check_type_specifier(bool_t* isTypSpecf, int *count_spef)
 		tok == DOUBLE ||
 		tok == CHAR   ||
 		tok == SHORT ||
-		tok == REGISTER)
+		tok == REGISTER ||
+		tok == VOID)
 	{
 		type = tok;
 		*isTypSpecf = True;
@@ -220,7 +221,7 @@ direct_declarator_dash
 	| '[' constant_expression ']' direct_declarator_dash
 	| '[' ']' direct_declarator_dash
 	| '(' type_specifier_list ')' direct_declarator_dash
-	| '(' declaration ')' direct_declarator_dash
+	| '(' parameter_list ')' direct_declarator_dash
 	| '(' ')' direct_declarator_dash
 	| '(' pointer IDENTIFIER ')' direct_declarator_dash
 direct_declarator
@@ -228,14 +229,14 @@ direct_declarator
 	| IDENTIFIER 
 	| IDENTIFIER '[' constant_expression ']' direct_declarator_dash
 	| IDENTIFIER '[' ']' direct_declarator
-	| IDENTIFIER '(' declaration ')' direct_declarator_dash
+	| IDENTIFIER '(' parameter_list ')' direct_declarator_dash
 	| IDENTIFIER '(' type_specifier_list ')' direct_declarator_dash
 	| IDENTIFIER '(' ')' direct_declarator_dash
 	| '(' pointer direct_declarator ')' direct_declarator_dash
 
 */
 
-void direct_declarator_dash()
+void direct_declarator_dash(int *count_id)
 {
 	bool_t isTypeQual = False;
 	int count_qual = 0;
@@ -254,7 +255,7 @@ void direct_declarator_dash()
 		{
 			checkEOF();
 			getNextToken();
-			direct_declarator_dash();
+			direct_declarator_dash(count_id);
 			return;
 		}
 		else
@@ -270,7 +271,7 @@ void direct_declarator_dash()
 				checkEOF();
 				getNextToken();
 			}
-			direct_declarator_dash();
+			direct_declarator_dash(count_id);
 			return;
 		}
 		
@@ -285,7 +286,7 @@ void direct_declarator_dash()
 		{
 			checkEOF();
 			getNextToken();
-			direct_declarator_dash();
+			direct_declarator_dash(count_id);
 			return;
 		}
 		else if (tok == '*')
@@ -315,24 +316,35 @@ void direct_declarator_dash()
 
 			checkEOF();
 			getNextToken();
-			direct_declarator_dash();
+			direct_declarator_dash(count_id);
 			return;
 		}
 		else 
 		{
-			type_specifier_list(&IsTypSpef);
-			tok = getCurrentToken();
-			if (IsTypSpef == True && tok == ')')
-			{
-				checkEOF();
-				getNextToken();
-				direct_declarator_dash();
-                return;
-			}
-			else
-			{
+	      if (*count_id == 1)
+		  {
+
+			  if (lookahead() == ',' || lookahead() == ')')
+			  {
+				  type_specifier_list(&IsTypSpef);
+				  tok = getCurrentToken();
+				  if (IsTypSpef == True && tok == ')')
+				  {
+					  checkEOF();
+					  getNextToken();
+					  direct_declarator_dash(count_id);
+					  return;
+				  }
+			  }
+			  else
+			  {
+				  func_defination_parameter_list();
+			  }
+		  }
+          else
+		  {
 				declaration(&IsDcl);
-			}
+		  }
 			
 
 		}
@@ -346,6 +358,8 @@ void direct_declarator()
 	bool_t isOpenBraces = False;
 	bool_t isOpenArrayBrack = False;
 	bool_t isTypeQual = False;
+	bool_t isTypeSpecf = False;
+	bool_t IsDcl = False;
 	int count_id = 0;
 	int count_qual = 0;
 	if (tok == '*')
@@ -357,7 +371,7 @@ void direct_declarator()
 			while (check_type_qualifier(&isTypeQual, &count_qual) != -1)
 			{
 				checkEOF();
-				getNextToken();
+				tok = getNextToken();
 				//type_qualifier_list();
 				 //check for more type qualifiers
 			}
@@ -371,7 +385,7 @@ void direct_declarator()
 		if (tok == ID)
 		{
 			checkEOF();
-			getNextToken();
+			tok = getNextToken();	
 			count_id++;
 		}
 
@@ -379,14 +393,13 @@ void direct_declarator()
 		if (tok == '(')
 		{
 			checkEOF();
-			getNextToken();
-			tok = getCurrentToken();
+			tok = getNextToken();
 			if (tok == ')')
 			{
 
 				checkEOF();
-				getNextToken();
-				direct_declarator_dash();
+				tok = getNextToken();
+				direct_declarator_dash(&count_id);
 				return;
 			}
 			else if (tok == '*')
@@ -405,7 +418,7 @@ void direct_declarator()
 				else if (check_type_qualifier(&isTypeQual, &count_qual) != -1)
 				{
 					checkEOF();
-					getNextToken();
+					tok = getNextToken();
 					//type_qualifier_list();
 					 //check for more type qualifiers
 				}
@@ -413,17 +426,55 @@ void direct_declarator()
 
 
 			}
-			if (tok != ')')
+			else
 			{
-				printf("error: expected ']' !\n");
+				if (tok == ')')
+				{
+
+					checkEOF();
+					getNextToken();
+					direct_declarator_dash(&count_id);
+					return;
+				}
+				else
+				{
+					if (count_id == 1)
+					{
+						if (lookahead() == ',' || lookahead() == ')')
+						{
+							type_specifier_list(&isTypeSpecf);
+							tok = getCurrentToken();
+							if (isTypeSpecf == True && tok == ')')
+							{
+								checkEOF();
+								getNextToken();
+								direct_declarator_dash(&count_id);
+								return;
+							}
+						}
+						else
+						{
+							func_defination_parameter_list();
+						}
+					}
+					else
+					{
+						declaration(&IsDcl);
+					}
+
+				}
+			}
+			/*if (tok != ')')
+			{
+				printf("error: expected ')' !\n");
 				exit(0);
 			}
 			else
 			{
 				checkEOF();
 				getNextToken();
-			}
-			direct_declarator_dash();
+			} */
+			direct_declarator_dash(&count_id);
 			
 		}
 		else if (tok == '[')
@@ -450,7 +501,7 @@ void direct_declarator()
 					getNextToken();
 				}
 			}
-			direct_declarator_dash();
+			direct_declarator_dash(&count_id);
 		}
 		if (count_id < 1)
 		{

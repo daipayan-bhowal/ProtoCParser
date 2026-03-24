@@ -18,7 +18,7 @@ TreeNode* body() // compound statement and body are the same thing in C language
 		}
 		declaration(&IsDcl);
 		t = statement();
-		if (tok == '}')
+		/*if (tok == '}')
 		{
 			checkEOF();
 			getNextToken();
@@ -28,7 +28,7 @@ TreeNode* body() // compound statement and body are the same thing in C language
 		{
 			printf("error: expected '}' at end of compound statement !\n");
 			exit(0);
-		}
+		}*/
 	}
 }
 
@@ -101,14 +101,16 @@ void func_defination_parameter_list()
 		getNextToken();
 		return;
 	}
-	else
-	{
-		printf("error: function defination argument is incomplete !");
-		exit(0);
-	}
 	declaration_specifiers();
 	declarator();
-	if (tok == ',')
+	tok = getCurrentToken();
+	if (tok == ')')
+	{
+		checkEOF();
+		getNextToken();
+		return;
+	}
+	else if (tok == ',')
 	{
 		checkEOF();
 		getNextToken();
@@ -137,6 +139,7 @@ void func_defin_or_decl(bool_t * isFuncDefin , bool_t  * isFuncDeclr)
 	int tok = getCurrentToken();
 	declaration_specifiers();
 	declarator();
+	tok = getCurrentToken();
 	if (tok == ';')  // complex function declaration
 	{
 		checkEOF();
@@ -144,9 +147,9 @@ void func_defin_or_decl(bool_t * isFuncDefin , bool_t  * isFuncDeclr)
 		*isFuncDeclr = True;
 		
 	}
-	else if(tok == '(')
+	else if(tok == '{')
 	{
-		func_defination_parameter_list();
+		//func_defination_parameter_list();
 		body();
 		*isFuncDefin = True;
 	}

@@ -183,3 +183,7 @@ void declarator();
 void abstract_declarator();
 TreeNode* statement();
 
+void func_defination_parameter_list();
+void func_declare_parameter_list();
+void start_function();
+
