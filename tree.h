@@ -177,13 +177,14 @@ TreeNode* unary_expression();
 TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim);
 TreeNode* argument_expression_list();
 
+bool_t MaybeDcl();
 void declaration(bool_t *);
-void declaration_specifiers();
+bool_t declaration_specifiers();
 void declarator();
 void abstract_declarator();
 TreeNode* statement();
 
 void func_defination_parameter_list();
 void func_declare_parameter_list();
-void start_function();
+bool_t start_function();
 

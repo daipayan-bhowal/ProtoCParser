@@ -2,57 +2,109 @@
 
 TreeNode* statement();
 TreeNode* expression_statement();
-TreeNode* switch_statement();
+TreeNode* switch_body();
 
 /* Based on K & R The C Programming language book modified grammer --> README.md
-switch_statement:
-	CASE expression ':' statement
-	DEFAULT ':' statement
+case_list:
+    DEFAULT ':' statement
+	CASE expression ':' statement case_list	
+switch_body:
+	'{' CASE expression ':' statement case_list '}'
+statement:
+	 switch '(' expression ')' switch_body
   */
-TreeNode* switch_statement()
+TreeNode* case_list()
 {
+	TreeNode* t_cases = NULL;
 	int tok = getCurrentToken();
-	while (tok == CASE ||
-		tok == DEFAULT)
+	if (tok == DEFAULT)
 	{
-
-		if (tok == CASE)
-		{
+		    t_cases = newStmtNode(Default);
 			checkEOF();
-			getNextToken();
-			expression();
+			tok = getNextToken();
 			if (tok == ':')
 			{
 				checkEOF();
 				getNextToken();
-				statement();
-			}
-			else
-			{
-				printf("error: expected ':' at end of case label !\n");
-				exit(0);
-			}
-        }
-		else if (tok == DEFAULT)
-		{
-
-			checkEOF();
-			getNextToken();
-			if (tok == ':')
-			{
-				checkEOF();
-				getNextToken();
-				statement();
+				t_cases->child[0] = statement();
+				return t_cases;
 			}
 			else
 			{
 				printf("error: expected ':' at end of default label !\n");
 				exit(0);
 			}
+	}
+	else if (tok == CASE)
+	{
+		t_cases = newStmtNode(Case);
+		checkEOF();
+		getNextToken();
+		t_cases->child[0] = expression();
+		tok = getCurrentToken();
+		if (tok == ':')
+		{
+			checkEOF();
+			getNextToken();
+			t_cases->child[1] = statement();
+			t_cases->child[2] = case_list();
+			return t_cases;
+		}
+		else
+		{
+			printf("error: expected ':' at end of case label !\n");
+			exit(0);
 		}
 	}
 
+	return t_cases;
+}
 
+TreeNode* switch_body()
+{
+	TreeNode* t_case = NULL;
+	int tok = getCurrentToken();
+	if (tok == '{')
+	{
+		checkEOF();
+		tok = getNextToken();
+	}
+	if (tok == CASE ||
+		tok == DEFAULT)
+	{
+		if (tok == CASE)
+		{
+			t_case = newStmtNode(Case);
+			checkEOF();
+		    getNextToken();
+			t_case->child[0]= expression();
+			tok = getCurrentToken();
+			if (tok == ':')
+			{
+				checkEOF();
+				getNextToken();
+				t_case->child[1] = statement();
+			}
+			else
+			{
+				printf("error: expected ':' at end of case label !\n");
+				exit(0);
+			}
+			t_case->child[2] = case_list();
+		}
+	}
+	if ((tok = getCurrentToken()) == '}')
+	{
+		checkEOF();
+		tok = getNextToken();
+	}
+	else
+	{
+		printf("error: expected '}' at end of switch !\n");
+		exit(0);
+	}
+
+	return t_case;
 }
 /*
 expression_statement:
@@ -74,6 +126,7 @@ TreeNode* expression_statement()
 	else
 	{
 		t= expression();
+		tok = getCurrentToken();
 		if (tok == ';')
 		{
 			checkEOF();
@@ -93,6 +146,7 @@ TreeNode* expression_statement()
 
 /* Based on K & R The C Programming language book modified grammer -->  
  statement:
+     ;
 	 IDENTIFIER : statement   // labeled statement
 	 '{' declaration_list statement '}'   // compound statement
 	 SWITCH '(' expression ')' switch_statement
@@ -108,7 +162,64 @@ TreeNode* statement()
 	TreeNode* t= NULL;
 	bool_t IsDcl = False;
 	int tok = getCurrentToken();
-	if (tok == ID)
+	if (tok == ';')
+	{
+		checkEOF();
+		getNextToken();
+		return NULL;
+	}
+	else if (tok == DO)
+	{
+		checkEOF();
+		tok = getNextToken();
+		t = newStmtNode(Do);
+		t->child[0] = statement();
+		tok = getCurrentToken();
+		if (tok == WHILE)
+		{
+			checkEOF();
+			tok = getNextToken();
+			if (tok == '(')
+			{
+				checkEOF();
+				getNextToken();
+				t->child[1] = expression();
+				tok = getCurrentToken();
+				if (tok == ')')
+				{
+					checkEOF();
+					tok = getNextToken();
+					if (tok == ';')
+					{
+						checkEOF();
+						getNextToken();
+						return t;
+					}
+					else
+					{
+						printf("error: expected ';' at end of do-while statement !\n");
+						exit(0);
+					}
+				}
+				else
+				{
+					printf("error: expected ')' !\n");
+					exit(0);
+				}
+			}
+			else
+			{
+				printf("error: expected '(' !\n");
+				exit(0);
+			}
+		}
+		else
+		{
+			printf("error: expected 'while' at end of do-while statement !\n");
+			exit(0);
+		}
+	}
+	else if (tok == ID)
 	{
 		checkEOF();
 		getNextToken();
@@ -124,19 +235,25 @@ TreeNode* statement()
 	else if (tok == '{')
 	{
 		checkEOF();
-		getNextToken();		
+		tok = getNextToken();		
 		if (tok == '}')
 		{
 			checkEOF();
 			getNextToken();
             return NULL;
 		}
-		declaration(&IsDcl);
+		else if(MaybeDcl() == True)
+		{
+			declaration(&IsDcl);
+		}
+		
 		t = statement();
+		tok = getCurrentToken();
 		if (tok == '}')
 		{
-			checkEOF();
-			getNextToken();
+			if(lookahead() == EOF)
+				return t;
+            getNextToken();
 			return t;
 		}
 		else
@@ -147,29 +264,50 @@ TreeNode* statement()
 	}
 	else if (tok == SWITCH)
 	{
+		t = newStmtNode(Switch);
 		checkEOF();
-		getNextToken();
-		switch_statement();
+		tok = getNextToken();
+		if (tok == '(')
+		{
+			checkEOF();
+			getNextToken();
+			t->child[0] = expression();
+			tok = getCurrentToken();
+			if (tok == ')')
+			{
+				checkEOF();
+				getNextToken();
+			}
+			else
+			{
+				printf("error: expected ')' !\n");
+				exit(0);
+			}
+		}
+
+		t->child[1] = switch_body();
 	}
 	else if (tok == IF)
 	{
 		checkEOF();
-		getNextToken();
+		tok = getNextToken();
 		t = newStmtNode(If);
 		if (tok == '(')
 		{
 			checkEOF();
 			getNextToken();
 			t->child[0] = expression();
+			tok = getCurrentToken();
 			if (tok == ')')
 			{
 				checkEOF();
-				getNextToken();
+				tok = getNextToken();
 				t->child[1] = statement();
+				tok = getCurrentToken();
 				if (tok == ELSE)
 				{
 					checkEOF();
-					getNextToken();
+					tok = getNextToken();
 					t->child[2] = statement();
 				}
 			}
@@ -188,17 +326,18 @@ TreeNode* statement()
 	else if (tok == FOR)
 	{
 		checkEOF();
-		getNextToken();
+		tok = getNextToken();
 		if (tok == '(')
 		{
 			checkEOF();
-			getNextToken();
+			tok = getNextToken();
 			expression_statement();
 			t = newStmtNode(For);
 			t->child[0] = expression_statement();
 			if (tok != ')')
 			{
 				expression();
+				tok = getCurrentToken();
 				if (tok != ')')
 				{
 					printf("error: expected ')' !\n");
@@ -209,12 +348,13 @@ TreeNode* statement()
 					checkEOF();
 					getNextToken();
 					t->child[1] = statement();
+					return t;
 				}
 			}
 			else
 			{
 				checkEOF();
-				getCurrentToken();
+				getNextToken();
 				t->child[1] = statement();
 				return t;
 			}
@@ -225,17 +365,20 @@ TreeNode* statement()
 	else if (tok == WHILE)
 	{
 		checkEOF();
-		getNextToken();
+		tok = getNextToken();
 		if (tok == '(')
 		{
 			checkEOF();
 			getNextToken();
-			expression();
+			t = newStmtNode(While);
+			t->child[0] = expression();
+			tok = getCurrentToken();
 			if (tok == ')')
 			{
 				checkEOF();
 				getNextToken();
-				statement();
+				t->child[1] = statement();
+				return t;
 			}
 			else
 			{
@@ -252,11 +395,11 @@ TreeNode* statement()
 	else if (tok == GOTO)
 	{
 		checkEOF();
-		getNextToken();
+		tok = getNextToken();
 		if (tok == ID)
 		{
 			checkEOF();
-			getNextToken();
+			tok = getNextToken();
 			if (tok == ';')
 			{
 				checkEOF();
@@ -279,7 +422,7 @@ TreeNode* statement()
 	else if(tok == CONTINUE)
 	{
 		checkEOF();
-		getNextToken();
+		tok = getNextToken();
 		if (tok == ';')
 		{
 			checkEOF();
@@ -296,7 +439,7 @@ TreeNode* statement()
 	else if (tok == BREAK)
 	{
 		checkEOF();
-		getNextToken();
+		tok = getNextToken();
 		if (tok == ';')
 		{
 			checkEOF();
@@ -306,7 +449,7 @@ TreeNode* statement()
 		}
 		else
 		{
-			printf("error: expected ';' at end of continue statement !\n");
+			printf("error: expected ';' at end of break statement !\n");
 			exit(0);
 		}
 	}

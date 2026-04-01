@@ -16,7 +16,11 @@ TreeNode* body() // compound statement and body are the same thing in C language
 			getNextToken();
 			return NULL;
 		}
-		declaration(&IsDcl);
+		if (MaybeDcl() == True)
+		{
+			declaration(&IsDcl);
+		}
+
 		t = statement();
 		/*if (tok == '}')
 		{
@@ -53,6 +57,7 @@ parameter_declaration
 
 void func_declare_parameter_list()
 {
+	bool_t IsDclSpecf = False;
 	int tok = getCurrentToken();
 	if (tok == ')')
 	{
@@ -65,7 +70,11 @@ void func_declare_parameter_list()
 		printf("error: function declaration is incomplete !");
 		exit(0);
 	}
-	declaration_specifiers();
+	IsDclSpecf = declaration_specifiers();
+	if (IsDclSpecf == False)
+	{
+		return;
+	}
 	abstract_declarator();
 	if (tok == ',')
 	{
@@ -94,6 +103,7 @@ void func_declare_parameter_list()
 }
 void func_defination_parameter_list()
 {
+	bool_t IsDclSpecf = False;
 	int tok = getCurrentToken();
 	if (tok == ')')
 	{
@@ -101,7 +111,11 @@ void func_defination_parameter_list()
 		getNextToken();
 		return;
 	}
-	declaration_specifiers();
+	IsDclSpecf = declaration_specifiers();
+	if (IsDclSpecf == False)
+	{
+		return;
+	}
 	declarator();
 	tok = getCurrentToken();
 	if (tok == ')')
@@ -137,7 +151,13 @@ void func_defination_parameter_list()
 void func_defin_or_decl(bool_t * isFuncDefin , bool_t  * isFuncDeclr)
 {
 	int tok = getCurrentToken();
-	declaration_specifiers();
+	bool_t IsDclSpecf = declaration_specifiers();
+	if (IsDclSpecf == False)
+	{
+		*isFuncDefin = False;
+		*isFuncDeclr = False;
+		return;
+	}
 	declarator();
 	tok = getCurrentToken();
 	if (tok == ';')  // complex function declaration
@@ -158,7 +178,7 @@ void func_defin_or_decl(bool_t * isFuncDefin , bool_t  * isFuncDeclr)
 
 }
 
-void start_function()
+bool_t start_function()
 {
 	bool_t isFuncDefin = False;
 	bool_t isFuncDeclr = False;
@@ -166,12 +186,16 @@ void start_function()
 	if (isFuncDeclr == True && isFuncDefin == True)
 	{
 		printf("error: function cannot be both declared and defined at the same time !");
-		exit(0);
+		return False;
 	}
 	else if (isFuncDeclr == False && isFuncDefin == False)
 	{
 		printf("error: function declaration or defination is expected !");
-		exit(0);
+		return False;
 	}
-
+	else // if (isFuncDeclr == True || isFuncDefin == True) , either one of them is true
+	{
+		return True;
+	}
+	return False;
 }

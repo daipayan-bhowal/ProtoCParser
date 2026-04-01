@@ -84,6 +84,48 @@ int dcl_test(const char* loc)
 	return 0;
 }
 
+int stmt_test(const char* loc)
+{
+	char* tape = {};
+	TreeNode* t_stmt;
+	int t = 0;
+	tape = (char*)calloc(1, sizeof(char));
+	tape_read((char*)loc, &tape);
+	int file_length;
+	string_t str = string_file(tape, &file_length);
+	//const char *tape2 = "i++ + ++i;";
+	//string_t str = string((char*)tape2);
+	//string_t meta = string("\0");
+	//tokenizer(str);
+	init_tokenizer(str);
+	/*for (i = 0; t != EOF;)
+	{
+		printf("Returned token is:%d\n", t = getTokenByPos(str, &i));
+
+	} */
+	
+	t_stmt=statement();
+	if (t_stmt == NULL)
+	{
+		printf("error: statement failed !\n");
+		exit(0);
+
+	}
+	else
+	{
+		printf("Successful statement !\n");
+		printf("Printing the statement tree:\n");
+		printTree(t_stmt);
+		free(t_stmt);
+	}
+	free(tape);
+	resetToken();
+	//  printf("entire file length is :%d\n", file_length);
+
+
+	return 0;
+}
+
 int func_test(const char* loc)
 {
 	char* tape = {};
@@ -103,7 +145,7 @@ int func_test(const char* loc)
 		printf("Returned token is:%d\n", t = getTokenByPos(str, &i));
 
 	} */
-	
+
 	start_function();
 	free(tape);
 	resetToken();
@@ -148,12 +190,12 @@ void test_all_func_TC()
 
 void test_all_stmt_TC()
 {
-	dcl_test("C:\\MyWork\\stmt1.c");
-	dcl_test("C:\\MyWork\\stmt2.c");
-	dcl_test("C:\\MyWork\\stmt3.c");
-	dcl_test("C:\\MyWork\\stmt4.c");
-	dcl_test("C:\\MyWork\\stmt5.c");
-	dcl_test("C:\\MyWork\\stmt6.c");
+	func_test("C:\\MyWork\\stmt1.c");
+	func_test("C:\\MyWork\\stmt2.c");
+	func_test("C:\\MyWork\\stmt3.c");
+	func_test("C:\\MyWork\\stmt4.c");
+	func_test("C:\\MyWork\\stmt5.c");
+	func_test("C:\\MyWork\\stmt6.c");
 }
 
 int main(int argc, char* argv[])
@@ -161,4 +203,5 @@ int main(int argc, char* argv[])
 	test_all_expr_TC_file();
 	test_all_dcl_TC();
 	test_all_func_TC();
+	test_all_stmt_TC();
 }

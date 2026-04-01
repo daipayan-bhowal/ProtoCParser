@@ -3,7 +3,30 @@
 
 void initializer_list();
 
+bool_t MaybeDcl()
+{
+	int tok = getCurrentToken();
+	if (tok == INT ||
+		tok == LONG ||
+		tok == FLOAT ||
+		tok == DOUBLE ||
+		tok == CHAR ||
+		tok == SHORT ||
+		tok == VOID ||
+		tok == SIGNED ||
+		tok == UNSIGNED ||
+		tok == CONST ||
+		tok == VOLATILE ||
+		tok == EXTERN ||
+		tok == STATIC ||
+		tok == AUTO ||
+		tok == TYPEDEF ||
+		tok == REGISTER ||
+		tok == ID)
+		return True;
 
+	return False;
+}
 
 int check_storage_class(bool_t* isStorage, int* count_stor)
 {
@@ -106,8 +129,9 @@ declaration_specifiers
 	| type_qualifier declaration_specifiers
 */
 
-void declaration_specifiers()
+bool_t declaration_specifiers()
 {
+	bool_t IsDclSpef = False;
 	bool_t isStorage = False;
 	bool_t isTypeSign = False;
 	bool_t isTypeSpecf = False;
@@ -131,22 +155,22 @@ void declaration_specifiers()
 		if (count_stor > 1)
 		{
 			printf("error: There can be a single class storage in declaration");
-			exit(0);
+			//exit(0);
 		}
 		else if (count_qual > 1)
 		{
 			printf("error: There can be a single type qualifier in declaration");
-			exit(0);
+			//exit(0);
 		}
 		else if (count_signed > 1)
 		{
 			printf("error: There can be a single signed/unsigned in declaration");
-			exit(0);
+			//exit(0);
 		}
 		else if (count_spef > 1)
 		{
 			printf("error: There can be a single type specifier in declaration");
-			exit(0);
+			//exit(0);
 		}
 
 	}
@@ -154,45 +178,49 @@ void declaration_specifiers()
 	if (isStorage == False && isTypeQual == False && isTypeSpecf == False)
 	{
 		printf("error: No type defined in declaration");
-		exit(0);
+		//exit(0);
 	}
 	else if (isStorage == True && isTypeQual == True && isTypeSpecf == False)
 	{
 		printf("error: type specifier is missing !\n");
-		exit(0);
+		//exit(0);
 	}
 	else if (isStorage == True && isTypeSpecf == False)
 	{
 		printf("error: Storage class defined without type specifier");
-		exit(0);
+		//exit(0);
 	}
 	else if (isTypeQual == True && isTypeSpecf == False)
 	{
 		printf("error: Type qualifier defined without type specifier");
-		exit(0);
+		//exit(0);
 	}
 	else if (isStorage == True && isTypeSpecf == True)
 	{
+		return True;
 	}
 	else if (isTypeQual == True && isTypeSpecf == True)
 	{
+		return True;
 	}
 	else if (isStorage == True && isTypeQual == True && isTypeSpecf == True)
 	{
+		return True;
 	}
 	else if (isStorage == False && isTypeQual == False && isTypeSpecf == True)
 	{
+		return True;
 	}
 	else if (isTypeSpecf == True)
 	{
-
+		return True;
 	}
 	else
 	{
 		printf("error: declaration syntax is not coorect !\n");
 		exit(0);
 	}
-	return;
+	return False;
 }
 
 void type_specifier_list(bool_t *IsTypSpefList)
@@ -616,7 +644,12 @@ void init_declarator_list()
 void declaration(bool_t *IsDecl)
 {
 	int tok = getCurrentToken();
-	declaration_specifiers();
+	bool_t IsDclSpecf = declaration_specifiers();
+	if (IsDclSpecf == False)
+	{
+		*IsDecl = False;
+		return;
+	}
 	if (tok != ';')
 	{
 		init_declarator_list();	
@@ -629,12 +662,14 @@ void declaration(bool_t *IsDecl)
 		else
 		{
 			*IsDecl = True;
+			getNextToken();
 			return;
 		}
 	}
 	else
 	{
 		*IsDecl = True;
+		getNextToken();
 		return;
 	}
 }
