@@ -47,6 +47,37 @@ void checkNextTokenIsNotPrim()
     }
 }
 
+void checkNextTokenIsNotUnary()
+{
+    int token = getCurrentToken();
+    if (token == '~' ||
+        token == '!' ||
+        token == INC_OP ||
+        token == DEC_OP ||
+        token == SIZEOF
+        )
+    {
+        printf("error: wrong expression, unary operator cannot come after primary expr!");
+        exit(0);
+    }
+
+}
+void checkNextTokenIsNotUnknownChar()
+{
+    int token = getCurrentToken();
+    if (token == '@' ||
+        token == '#' ||
+        token == '$' ||
+        token == '`'
+        )
+    {
+		printf("error: wrong expression, illegal symbols found %c !", token);
+        exit(0);
+    }
+
+}
+
+
 TreeNode* primary_expression(bool_t* IsPrim)
 {
     //  int k=current_ptr;
@@ -105,6 +136,8 @@ TreeNode* primary_expression(bool_t* IsPrim)
             return t;
         getNextToken();
         checkNextTokenIsNotPrim();
+        checkNextTokenIsNotUnary();
+        checkNextTokenIsNotUnknownChar();
     }
     else if (token == ID)
     {
@@ -117,6 +150,8 @@ TreeNode* primary_expression(bool_t* IsPrim)
             return t;
         getNextToken();
         checkNextTokenIsNotPrim();
+        checkNextTokenIsNotUnary();
+        checkNextTokenIsNotUnknownChar();
 
     }
     else if (token == STROBJ)
@@ -130,6 +165,8 @@ TreeNode* primary_expression(bool_t* IsPrim)
             return t;
         getNextToken();
         checkNextTokenIsNotPrim();
+        checkNextTokenIsNotUnary();
+        checkNextTokenIsNotUnknownChar();
     }
     else if (token == '(')
     {
