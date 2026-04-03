@@ -155,22 +155,22 @@ bool_t declaration_specifiers()
 		if (count_stor > 1)
 		{
 			printf("error: There can be a single class storage in declaration");
-			//exit(0);
+			//_exit(0);
 		}
 		else if (count_qual > 1)
 		{
 			printf("error: There can be a single type qualifier in declaration");
-			//exit(0);
+			//_exit(0);
 		}
 		else if (count_signed > 1)
 		{
 			printf("error: There can be a single signed/unsigned in declaration");
-			//exit(0);
+			//_exit(0);
 		}
 		else if (count_spef > 1)
 		{
 			printf("error: There can be a single type specifier in declaration");
-			//exit(0);
+			//_exit(0);
 		}
 
 	}
@@ -178,22 +178,22 @@ bool_t declaration_specifiers()
 	if (isStorage == False && isTypeQual == False && isTypeSpecf == False)
 	{
 		printf("error: No type defined in declaration");
-		//exit(0);
+		//_exit(0);
 	}
 	else if (isStorage == True && isTypeQual == True && isTypeSpecf == False)
 	{
 		printf("error: type specifier is missing !\n");
-		//exit(0);
+		//_exit(0);
 	}
 	else if (isStorage == True && isTypeSpecf == False)
 	{
 		printf("error: Storage class defined without type specifier");
-		//exit(0);
+		//_exit(0);
 	}
 	else if (isTypeQual == True && isTypeSpecf == False)
 	{
 		printf("error: Type qualifier defined without type specifier");
-		//exit(0);
+		//_exit(0);
 	}
 	else if (isStorage == True && isTypeSpecf == True)
 	{
@@ -218,7 +218,7 @@ bool_t declaration_specifiers()
 	else
 	{
 		printf("error: declaration syntax is not coorect !\n");
-		exit(0);
+		_exit(0);
 	}
 	return False;
 }
@@ -292,7 +292,7 @@ void direct_declarator_dash(int *count_id)
 			if (tok != ']')
 			{
 				printf("error: expected ']' !\n");
-				exit(0);
+				_exit(0);
 			}
 			else
 			{
@@ -495,7 +495,7 @@ void direct_declarator()
 			/*if (tok != ')')
 			{
 				printf("error: expected ')' !\n");
-				exit(0);
+				_exit(0);
 			}
 			else
 			{
@@ -521,7 +521,7 @@ void direct_declarator()
 				if (tok != ']')
 				{
 					printf("error: expected ']' !\n");
-					exit(0);
+					_exit(0);
 				}
 				else
 				{
@@ -534,13 +534,13 @@ void direct_declarator()
 		if (count_id < 1)
 		{
 			printf("error: expected identifier !\n");
-			exit(0);
+			_exit(0);
 		}
 	}
 	else if (tok == ')' || tok == ']')
 	{
 		printf("error: declaration syntax is not correct !\n");
-		exit(0);
+		_exit(0);
 	}
 
 
@@ -588,7 +588,7 @@ void initializer()
 		if (tok != '}')
 		{
 			printf("error: expected '}' !\n");
-			exit(0);
+			_exit(0);
 		}
 	}
 	else
@@ -657,7 +657,7 @@ void declaration(bool_t *IsDecl)
 		if (tok != ';')
 		{
 			printf("error: expected ';' at end !\n");
-			exit(0);
+			_exit(0);
 		}
 		else
 		{
@@ -713,7 +713,7 @@ void direct_abstract_declarator()
 				if (tok != ')')
 				{
 					printf("error: expected ')' !\n");
-					exit(0);
+					_exit(0);
 				}
 				return;
 			}
@@ -734,7 +734,7 @@ void direct_abstract_declarator()
 				else
 				{
 					printf("error: expected ')' !\n");
-					exit(0);
+					_exit(0);
 				}
 				return;
 			}
@@ -749,7 +749,7 @@ void direct_abstract_declarator()
 			if (tok != ']')
 			{
 				printf("error: expected ']' !\n");
-				exit(0);
+				_exit(0);
 			}
 			else {
 				checkEOF();
@@ -792,12 +792,12 @@ void specifier_qualifier_list()
 	if (isTypeQual == False && isTypeSpecf == False)
 	{
 		printf("error: No type defined in declaration");
-		exit(0);
+		_exit(0);
 	}
 	else if (isTypeQual == True && isTypeSpecf == False)
 	{
 		printf("error: Type qualifier defined without type specifier");
-		exit(0);
+		_exit(0);
 	}
 	else if (isTypeSpecf == True)
 	{

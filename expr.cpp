@@ -9,12 +9,14 @@
 //#include "util.h"
 //#include "p_codegen.h"
 
+#include "Brutal.h"
+
 
 
 void IsParseFailed(const char source_func[], int line)
 {
     printf("%s: error: token:%s tok pos:%d at Parser func:%s line:%d ", __FILE__, getTokenString()->str, getTokenPos(), source_func, line);
-    exit(0);
+    _exit(0);
 
 }
 void FailOnEOF(const char source_func[], int line)
@@ -43,7 +45,7 @@ void checkNextTokenIsNotPrim()
         )
     {
         printf("error: wrong expression, primary expr cannot come after primary expr!");
-        exit(0);
+        _exit(0);
     }
 }
 
@@ -58,7 +60,7 @@ void checkNextTokenIsNotUnary()
         )
     {
         printf("error: wrong expression, unary operator cannot come after primary expr!");
-        exit(0);
+        _exit(0);
     }
 
 }
@@ -72,7 +74,7 @@ void checkNextTokenIsNotUnknownChar()
         )
     {
 		printf("error: wrong expression, illegal symbols found %c !", token);
-        exit(0);
+        _exit(0);
     }
 
 }
@@ -178,7 +180,7 @@ TreeNode* primary_expression(bool_t* IsPrim)
         if ((token = getCurrentToken()) != ')')
         {
             printf("error: expected ')' !\n");
-            exit(0);
+            _exit(0);
         }
         if (t != NULL)
         {
@@ -393,7 +395,7 @@ TreeNode* conditional_expression()
         if ((tok = getCurrentToken()) != ':')
         {
             printf("error: expected '?' \n");
-            exit(0);
+            _exit(0);
         }
 
         checkEOF();
@@ -881,14 +883,14 @@ TreeNode* unary_expression()
                 if (tok != ')')
                 {
                     printf("error: expected ')' !\n");
-                    exit(0);
+                    _exit(0);
                 }
                 return t;
             }
             else
             {
                 printf("error: expected cast operator, not:%s !", getTokenString());
-                exit(0);
+                _exit(0);
             }
 
         }
@@ -897,7 +899,7 @@ TreeNode* unary_expression()
         if (tok != ')')
         {
             printf("error: expected ')' !\n");
-            exit(0);
+            _exit(0);
         }
         else
         {   
@@ -1080,7 +1082,7 @@ TreeNode* unary_expression()
             if ((t->child[0] = expression()) == NULL)
             {
                 printf("error: sizeof doesn't have operand !");
-                exit(0);
+                _exit(0);
             }
             return t;
         }
@@ -1200,7 +1202,7 @@ TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
 		    {
 		       printf("error: two consecutive post increment or decrement operators are not allowed !\n");
 			   IsParseFailed(__func__, __LINE__);
-               exit(0);
+               _exit(0);
             }
             *IsPost = True;
             t2 = newExpNode(OP);
@@ -1220,7 +1222,7 @@ TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
             {
                printf("error: two consecutive post increment or decrement operators are not allowed !\n");
                IsParseFailed(__func__, __LINE__);
-               exit(0);
+               _exit(0);
             }
             *IsPost = True;
             t2 = newExpNode(OP);

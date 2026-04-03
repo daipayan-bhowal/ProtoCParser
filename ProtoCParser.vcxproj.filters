@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Brutal Test Framework">
+      <UniqueIdentifier>{4d7fb9a8-2dea-4554-9f9f-e5f2aa22ccc2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProtoCParser.cpp">
@@ -42,6 +45,9 @@
     <ClCompile Include="func.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Brutal_testsuite.cpp">
+      <Filter>Brutal Test Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLexer.h">
@@ -61,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="tree.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Brutal.h">
+      <Filter>Brutal Test Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

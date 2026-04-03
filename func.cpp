@@ -31,7 +31,7 @@ TreeNode* body() // compound statement and body are the same thing in C language
 		else
 		{
 			printf("error: expected '}' at end of compound statement !\n");
-			exit(0);
+			_exit(0);
 		}*/
 	}
 }
@@ -68,7 +68,7 @@ void func_declare_parameter_list()
 	else
 	{
 		printf("error: function declaration is incomplete !");
-		exit(0);
+		_exit(0);
 	}
 	IsDclSpecf = declaration_specifiers();
 	if (IsDclSpecf == False)
@@ -89,7 +89,7 @@ void func_declare_parameter_list()
 		if (tok != ')')
 		{
 			printf("error: expected ')' at end of parameter list !");
-			exit(0);
+			_exit(0);
 		}
 		else
 		{
@@ -137,7 +137,7 @@ void func_defination_parameter_list()
 		if (tok != ')')
 		{
 			printf("error: expected ')' at end of parameter list !");
-			exit(0);
+			_exit(0);
 		}
 		else
 		{

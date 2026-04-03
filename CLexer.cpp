@@ -821,7 +821,7 @@ KEYWORD:	 // start with keyword portion
 			else if (is_keyword == true)
 			{
 				printf("error: Wrong keyword usage !");
-				exit(0);
+				_exit(0);
 			}
 			else
 				return ID;
@@ -867,7 +867,7 @@ KEYWORD:	 // start with keyword portion
 			if (is_keyword == true)
 			{
 				printf("error: Wrong keyword usage !");
-				exit(0);
+				_exit(0);
 			}
 			else
 			{
@@ -882,7 +882,7 @@ KEYWORD:	 // start with keyword portion
 			if (is_keyword == true)
 			{
 				printf("error: Wrong keyword usage !");
-				exit(0);
+				_exit(0);
 			}
 		}
 		case '"':
@@ -939,7 +939,7 @@ IDENTIFIER: // identifier section
 			if (pos == start_pos)
 			{
 				printf("error: not an identifier !");
-				exit(0);
+				_exit(0);
 			}
 			break;
 		}
@@ -952,7 +952,7 @@ IDENTIFIER: // identifier section
 	if (pos - start_pos > 511)
 	{
 		printf("error: an identifier has a limit of size 512 !");
-		exit(0);
+		_exit(0);
 	}
 	if (((last_pos - start_pos) > 0) && last_pos > 0 && last_pos == (pos - 1))
 	{
@@ -1055,7 +1055,7 @@ int _getNextToken(const char source_func[], int line)
 	int t = getTokenByPos(FileStrBuffer, &current_pos);
 	if (t == EOF)
 	{
-		exit(0);
+		_exit(0);
 	}
 	end_position = current_pos;
 	token_struct_ptr->start_pos = start_position;
@@ -1068,7 +1068,7 @@ int _getNextToken(const char source_func[], int line)
 		return EOF;
 	token_struct_ptr = (struct Token*)realloc(token_struct_ptr, sizeof(struct Token) * token_struct_len);
 	if (token_struct_ptr == NULL)
-		exit(0);
+		_exit(0);
 
 	return t;
 

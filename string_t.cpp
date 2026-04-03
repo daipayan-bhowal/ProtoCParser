@@ -721,7 +721,7 @@ string_t concat_copy(string_t a, string_t b)
 		return a;
 	}
 
-	for (; i < a->len; i++)
+	for (; i < a->len-1; i++)
 	{
 		new_str[i] = a->str[i];
 	}

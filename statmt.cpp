@@ -32,7 +32,7 @@ TreeNode* case_list()
 			else
 			{
 				printf("error: expected ':' at end of default label !\n");
-				exit(0);
+				_exit(0);
 			}
 	}
 	else if (tok == CASE)
@@ -53,7 +53,7 @@ TreeNode* case_list()
 		else
 		{
 			printf("error: expected ':' at end of case label !\n");
-			exit(0);
+			_exit(0);
 		}
 	}
 
@@ -88,7 +88,7 @@ TreeNode* switch_body()
 			else
 			{
 				printf("error: expected ':' at end of case label !\n");
-				exit(0);
+				_exit(0);
 			}
 			t_case->child[2] = case_list();
 		}
@@ -101,7 +101,7 @@ TreeNode* switch_body()
 	else
 	{
 		printf("error: expected '}' at end of switch !\n");
-		exit(0);
+		_exit(0);
 	}
 
 	return t_case;
@@ -136,7 +136,7 @@ TreeNode* expression_statement()
 		else
 		{
 			printf("error: expected ';' at end of expression statement !\n");
-			exit(0);
+			_exit(0);
 		}
 
 	}
@@ -198,25 +198,25 @@ TreeNode* statement()
 					else
 					{
 						printf("error: expected ';' at end of do-while statement !\n");
-						exit(0);
+						_exit(0);
 					}
 				}
 				else
 				{
 					printf("error: expected ')' !\n");
-					exit(0);
+					_exit(0);
 				}
 			}
 			else
 			{
 				printf("error: expected '(' !\n");
-				exit(0);
+				_exit(0);
 			}
 		}
 		else
 		{
 			printf("error: expected 'while' at end of do-while statement !\n");
-			exit(0);
+			_exit(0);
 		}
 	}
 	else if (tok == ID)
@@ -259,7 +259,7 @@ TreeNode* statement()
 		else
 		{
 			printf("error: expected '}' at end of compound statement !\n");
-			exit(0);
+			_exit(0);
 		}
 	}
 	else if (tok == SWITCH)
@@ -281,7 +281,7 @@ TreeNode* statement()
 			else
 			{
 				printf("error: expected ')' !\n");
-				exit(0);
+				_exit(0);
 			}
 		}
 
@@ -314,13 +314,13 @@ TreeNode* statement()
 			else
 			{
 				printf("error: expected ')' !\n");
-				exit(0);
+				_exit(0);
 			}
 		}
 		else
 		{
 			printf("error: expected '(' !\n");
-			exit(0);
+			_exit(0);
 		}
 	}
 	else if (tok == FOR)
@@ -341,7 +341,7 @@ TreeNode* statement()
 				if (tok != ')')
 				{
 					printf("error: expected ')' !\n");
-					exit(0);
+					_exit(0);
 				}
 				else
 				{
@@ -383,13 +383,13 @@ TreeNode* statement()
 			else
 			{
 				printf("error: expected ')' !\n");
-				exit(0);
+				_exit(0);
 			}
 		}
 		else
 		{
 			printf("error: expected '(' !\n");
-			exit(0);
+			_exit(0);
 		}
 	}
 	else if (tok == GOTO)
@@ -410,13 +410,13 @@ TreeNode* statement()
 			else
 			{
 				printf("error: expected ';' at end of goto statement !\n");
-				exit(0);
+				_exit(0);
 			}
 		}
 		else
 		{
 			printf("error: expected label name after 'goto' !\n");
-			exit(0);
+			_exit(0);
 		}
 	}
 	else if(tok == CONTINUE)
@@ -433,7 +433,7 @@ TreeNode* statement()
 		else
 		{
 			printf("error: expected ';' at end of continue statement !\n");
-			exit(0);
+			_exit(0);
 		}
 	}
 	else if (tok == BREAK)
@@ -450,7 +450,7 @@ TreeNode* statement()
 		else
 		{
 			printf("error: expected ';' at end of break statement !\n");
-			exit(0);
+			_exit(0);
 		}
 	}
 	else if (tok == RETURN)
