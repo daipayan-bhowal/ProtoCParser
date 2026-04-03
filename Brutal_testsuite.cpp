@@ -14,7 +14,7 @@ bool_t Brutal_get_current_dir(char* cwd)
 {
 	size_t size = 1024;
 	if (getcwd(cwd, size) != NULL) {
-		printf("Current working directory: %s\n", cwd);
+		//printf("Current working directory: %s\n", cwd);
 		return True;
 	}
 	else {
@@ -23,6 +23,16 @@ bool_t Brutal_get_current_dir(char* cwd)
 		return False;
 	}
 	
+}
+
+void UpdateTcFail()
+{
+	TCFail = True;
+}
+
+void ResetTcFail()
+{
+	TCFail = False;
 }
 
 
@@ -47,8 +57,16 @@ int Brutal_expr_test_file(const char* loc)
 		printf("Returned token is:%d\n", t = getTokenByPos(str, &i));
 
 	} */
-	if ((expr = expression()) != NULL)
+	expr = expression();
+	if (TCFail == True)
 	{
+		printf("error: expression failed !\n");
+		ResetTcFail();
+		return 0;
+	}
+	if (expr != NULL)
+	{
+
 		printf("It is an expression() !\n");
 		printf("Printing the expression tree:\n");
 		printTree(expr);
@@ -91,6 +109,12 @@ int Brutal_dcl_test_file(const char* loc)
 	} */
 	bool_t IsDcl = False;
 	declaration(&IsDcl);
+	if (TCFail == True)
+	{
+		printf("[BRUTAL TestFrame Error]: declaration failed !\n");
+		ResetTcFail();
+		return 0;
+	}
 	if (IsDcl == True)
 	{
 		printf("Successful declaration !\n");
@@ -130,6 +154,12 @@ int Brutal_stmt_test_file(const char* loc)
 	} */
 
 	t_stmt = statement();
+	if (TCFail == True)
+	{
+		printf("error: statement failed !\n");
+		ResetTcFail();
+		return 0;
+	}
 	if (t_stmt == NULL)
 	{
 		printf("error: statement failed !\n");
@@ -173,6 +203,12 @@ int Brutal_func_test_file(const char* loc)
 	} */
 
 	start_function();
+	if (TCFail == True)
+	{
+		printf("[BRUTAL Error]: function failed !\n");
+		ResetTcFail();
+		return 0;
+	}
 	free(tape);
 	resetToken();
 	//  printf("entire file length is :%d\n", file_length);

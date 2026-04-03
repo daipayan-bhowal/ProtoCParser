@@ -15,8 +15,8 @@
 
 void IsParseFailed(const char source_func[], int line)
 {
-    printf("%s: error: token:%s tok pos:%d at Parser func:%s line:%d ", __FILE__, getTokenString()->str, getTokenPos(), source_func, line);
-    _exit(0);
+    printf("%s: error: token:%s tok pos:%d at Parser func:%s line:%d \n", __FILE__, getTokenString()->str, getTokenPos(), source_func, line);
+    exit(0);
 
 }
 void FailOnEOF(const char source_func[], int line)
@@ -27,7 +27,7 @@ void FailOnEOF(const char source_func[], int line)
     }
 }
 
-void checkNextTokenIsNotPrim()
+bool_t checkNextTokenIsNotPrim()
 {
     int token = getCurrentToken();
     if (token == ID ||
@@ -44,12 +44,12 @@ void checkNextTokenIsNotPrim()
         token == ESCAPE_SEQ_CONST
         )
     {
-        printf("error: wrong expression, primary expr cannot come after primary expr!");
-        _exit(0);
+        printf("error: wrong expression, primary expr cannot come after primary expr!\n");
+        return True;
     }
 }
 
-void checkNextTokenIsNotUnary()
+bool_t checkNextTokenIsNotUnary()
 {
     int token = getCurrentToken();
     if (token == '~' ||
@@ -59,12 +59,12 @@ void checkNextTokenIsNotUnary()
         token == SIZEOF
         )
     {
-        printf("error: wrong expression, unary operator cannot come after primary expr!");
-        _exit(0);
+        printf("error: wrong expression, unary operator cannot come after primary expr!\n");
+        return True;
     }
 
 }
-void checkNextTokenIsNotUnknownChar()
+bool_t checkNextTokenIsNotUnknownChar()
 {
     int token = getCurrentToken();
     if (token == '@' ||
@@ -73,10 +73,10 @@ void checkNextTokenIsNotUnknownChar()
         token == '`'
         )
     {
-		printf("error: wrong expression, illegal symbols found %c !", token);
-        _exit(0);
+		printf("error: wrong expression, illegal symbols found %c !\n", token);
+        return True;
     }
-
+    return False;
 }
 
 
@@ -137,9 +137,11 @@ TreeNode* primary_expression(bool_t* IsPrim)
         if (lookahead() == EOF)
             return t;
         getNextToken();
-        checkNextTokenIsNotPrim();
-        checkNextTokenIsNotUnary();
-        checkNextTokenIsNotUnknownChar();
+        if (checkNextTokenIsNotPrim() == True ||
+            checkNextTokenIsNotUnary() == True ||
+            checkNextTokenIsNotUnknownChar() == True
+            )
+            _exit(0);
     }
     else if (token == ID)
     {
@@ -151,9 +153,11 @@ TreeNode* primary_expression(bool_t* IsPrim)
         if (lookahead() == EOF)
             return t;
         getNextToken();
-        checkNextTokenIsNotPrim();
-        checkNextTokenIsNotUnary();
-        checkNextTokenIsNotUnknownChar();
+        if (checkNextTokenIsNotPrim() == True ||
+            checkNextTokenIsNotUnary() == True ||
+            checkNextTokenIsNotUnknownChar() == True
+            )
+            _exit(0);
 
     }
     else if (token == STROBJ)
@@ -166,9 +170,11 @@ TreeNode* primary_expression(bool_t* IsPrim)
         if (lookahead() == EOF)
             return t;
         getNextToken();
-        checkNextTokenIsNotPrim();
-        checkNextTokenIsNotUnary();
-        checkNextTokenIsNotUnknownChar();
+        if (checkNextTokenIsNotPrim() == True ||
+            checkNextTokenIsNotUnary() == True ||
+            checkNextTokenIsNotUnknownChar() == True
+            )
+            _exit(0);
     }
     else if (token == '(')
     {
