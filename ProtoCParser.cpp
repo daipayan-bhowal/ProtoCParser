@@ -2,11 +2,14 @@
 
 int main(int argc, char* argv[])
 {
-#if BRUTAL_FRAMEWORK_ENABLE == 1
+	Brutal_init();
 	Brutal_test_all_expr_TC_file();
-	Brutal_test_all_dcl_TC_file();
+	Brutal_all_test_case_stats();
+	//Brutal_test_all_dcl_TC_file();
 	Brutal_test_all_func_TC_file();
+	Brutal_all_test_case_stats();
 	Brutal_test_all_stmt_TC_file();
-#endif
+	Brutal_all_test_case_stats();
+	
 	return 0;
 }

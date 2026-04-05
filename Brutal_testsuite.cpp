@@ -9,6 +9,10 @@
 #include <iostream>
 #include <direct.h>
 
+#define NO_OF_TESTCASES 100
+int TCResults[NO_OF_TESTCASES];  // O means fail, 1 means pass
+string_t TCFileNames[NO_OF_TESTCASES];
+int tc_counter = 0;
 
 bool_t Brutal_get_current_dir(char* cwd)
 {
@@ -35,7 +39,19 @@ void ResetTcFail()
 	TCFail = False;
 }
 
-
+void Brutal_init()
+{
+	TCFail = False;
+#if BRUTAL_FRAMEWORK_ENABLE == 1
+	printf("============================================================\n");
+	printf("             Brutal TestFramework is up now !               \n");
+	printf("============================================================\n");
+#else 
+	printf("============================================================\n");
+	printf("             Running TCs in real environmemt !                  \n");
+	printf("============================================================\n");
+#endif
+}
 int Brutal_expr_test_file(const char* loc)
 {
 	char* tape = {};
@@ -57,16 +73,25 @@ int Brutal_expr_test_file(const char* loc)
 		printf("Returned token is:%d\n", t = getTokenByPos(str, &i));
 
 	} */
+	printf("============================================================\n");
+	printf("   TC started for %s                                        \n", loc);
+	printf("============================================================\n");
+	printf("   Filecontent is: %s                                        \n", str->str);
+	printf("============================================================\n");
+	tc_counter++;
+	TCFileNames[tc_counter] = string_const(loc);
 	expr = expression();
 	if (TCFail == True)
 	{
-		printf("error: expression failed !\n");
+		TCResults[tc_counter] = 0;		
+		printf("[Brutal TestFrame error]: expression failed at file:%s!\n", loc);
+		Brutal_all_test_case_stats();
 		ResetTcFail();
 		return 0;
 	}
 	if (expr != NULL)
 	{
-
+		TCResults[tc_counter] = 1;
 		printf("It is an expression() !\n");
 		printf("Printing the expression tree:\n");
 		printTree(expr);
@@ -74,7 +99,8 @@ int Brutal_expr_test_file(const char* loc)
 	}
 	else
 	{
-		printf("error: expression failed !\n");
+		TCResults[tc_counter] = 0;
+		printf("error: expression failed at file:%s!\n", loc);
 		_exit(0);
 
 	}
@@ -108,19 +134,30 @@ int Brutal_dcl_test_file(const char* loc)
 
 	} */
 	bool_t IsDcl = False;
+	printf("============================================================\n");
+	printf("   TC started for %s                                        \n", loc);
+	printf("============================================================\n");
+	printf("   Filecontent is: %s                                        \n", str->str);
+	printf("============================================================\n");
+	tc_counter++;
+	TCFileNames[tc_counter] = string_const(loc);
 	declaration(&IsDcl);
 	if (TCFail == True)
 	{
+		TCResults[tc_counter] = 0;
 		printf("[BRUTAL TestFrame Error]: declaration failed !\n");
+		Brutal_all_test_case_stats();
 		ResetTcFail();
 		return 0;
 	}
 	if (IsDcl == True)
 	{
+		TCResults[tc_counter] = 1;
 		printf("Successful declaration !\n");
 	}
 	else
 	{
+		TCResults[tc_counter] = 0;
 		printf("error: declaration failed !\n");
 		_exit(0);
 	}
@@ -152,11 +189,18 @@ int Brutal_stmt_test_file(const char* loc)
 		printf("Returned token is:%d\n", t = getTokenByPos(str, &i));
 
 	} */
-
+	printf("============================================================\n");
+	printf("   TC started for %s                                        \n", loc);
+	printf("============================================================\n");
+	printf("   Filecontent is: %s                                        \n", str->str);
+	printf("============================================================\n");
+	tc_counter++;
+	TCFileNames[tc_counter] = string_const(loc);
 	t_stmt = statement();
 	if (TCFail == True)
 	{
 		printf("error: statement failed !\n");
+		Brutal_all_test_case_stats();
 		ResetTcFail();
 		return 0;
 	}
@@ -201,13 +245,32 @@ int Brutal_func_test_file(const char* loc)
 		printf("Returned token is:%d\n", t = getTokenByPos(str, &i));
 
 	} */
-
-	start_function();
+	printf("============================================================\n");
+	printf("   TC started for %s                                        \n", loc);
+	printf("============================================================\n");
+	printf("   Filecontent is: %s                                        \n", str->str);
+	printf("============================================================\n");
+	tc_counter++;
+	TCFileNames[tc_counter] = string_const(loc);
+	bool_t result = start_function();
 	if (TCFail == True)
 	{
+		TCResults[tc_counter] = 0;
 		printf("[BRUTAL Error]: function failed !\n");
+		Brutal_all_test_case_stats();
 		ResetTcFail();
 		return 0;
+	}
+	if (result == True)
+	{
+		TCResults[tc_counter] = 1;
+		printf("Successful function parsing !\n");
+	}
+	else
+	{
+		TCResults[tc_counter] = 0;
+		printf("error: function parsing failed !\n");
+		_exit(0);
 	}
 	free(tape);
 	resetToken();
@@ -281,4 +344,19 @@ void Brutal_test_all_stmt_TC_file()
 	Brutal_func_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\stmt4.c")));
 	Brutal_func_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\stmt5.c")));
 	Brutal_func_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\stmt6.c")));
+}
+
+void Brutal_all_test_case_stats()
+{
+	int itr_tcs = 1;
+#if BRUTAL_FRAMEWORK_ENABLE == 1
+	printf("======================================================================================\n");
+	printf("|                TestFile pathname                               |   Test Result     |\n");
+	printf("======================================================================================\n");
+	for (;itr_tcs <= tc_counter; itr_tcs++)
+	{
+		printf("   %s  |  %s \n", TCFileNames[itr_tcs]->str, TCResults[itr_tcs] == 1 ? "PASS" : "FAIL");
+		printf("=====================================================================================\n");
+	}
+#endif
 }

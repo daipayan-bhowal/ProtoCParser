@@ -27,7 +27,7 @@ void FailOnEOF(const char source_func[], int line)
     }
 }
 
-bool_t checkNextTokenIsNotPrim()
+bool_t checkNextTokenIsPrim()
 {
     int token = getCurrentToken();
     if (token == ID ||
@@ -49,13 +49,11 @@ bool_t checkNextTokenIsNotPrim()
     }
 }
 
-bool_t checkNextTokenIsNotUnary()
+bool_t checkNextTokenIsUnary()
 {
     int token = getCurrentToken();
     if (token == '~' ||
         token == '!' ||
-        token == INC_OP ||
-        token == DEC_OP ||
         token == SIZEOF
         )
     {
@@ -64,7 +62,7 @@ bool_t checkNextTokenIsNotUnary()
     }
 
 }
-bool_t checkNextTokenIsNotUnknownChar()
+bool_t checkNextTokenIsUnknownChar()
 {
     int token = getCurrentToken();
     if (token == '@' ||
@@ -137,9 +135,9 @@ TreeNode* primary_expression(bool_t* IsPrim)
         if (lookahead() == EOF)
             return t;
         getNextToken();
-        if (checkNextTokenIsNotPrim() == True ||
-            checkNextTokenIsNotUnary() == True ||
-            checkNextTokenIsNotUnknownChar() == True
+        if (checkNextTokenIsPrim() == True ||
+            checkNextTokenIsUnary() == True ||
+            checkNextTokenIsUnknownChar() == True
             )
             _exit(0);
     }
@@ -153,9 +151,9 @@ TreeNode* primary_expression(bool_t* IsPrim)
         if (lookahead() == EOF)
             return t;
         getNextToken();
-        if (checkNextTokenIsNotPrim() == True ||
-            checkNextTokenIsNotUnary() == True ||
-            checkNextTokenIsNotUnknownChar() == True
+        if (checkNextTokenIsPrim() == True ||
+            checkNextTokenIsUnary() == True ||
+            checkNextTokenIsUnknownChar() == True
             )
             _exit(0);
 
@@ -170,9 +168,9 @@ TreeNode* primary_expression(bool_t* IsPrim)
         if (lookahead() == EOF)
             return t;
         getNextToken();
-        if (checkNextTokenIsNotPrim() == True ||
-            checkNextTokenIsNotUnary() == True ||
-            checkNextTokenIsNotUnknownChar() == True
+        if (checkNextTokenIsPrim() == True ||     // next token should not be prime, unary or unknown chars
+            checkNextTokenIsUnary() == True ||      // if it's one of them then illegal i.e.  x = "hello"~
+            checkNextTokenIsUnknownChar() == True
             )
             _exit(0);
     }
@@ -1129,7 +1127,7 @@ postfix_expression
 
 TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
 {
-    TreeNode* t2 = NULL;
+    TreeNode* t2 = NULL,* t=NULL;
     int tok = getCurrentToken();
     if (tok == '[')
     {
