@@ -1011,7 +1011,7 @@ IDENTIFIER: // identifier section
 }
 
 
-void tokenizer(string_t str)
+void lexer_testbed(string_t str) // fetches all tokens from a file at once, designed for testing the lexer
 {
 	int start_position, end_position;
 	int t = 0;

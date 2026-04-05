@@ -103,7 +103,7 @@ struct Token
 	int token_integerform;
 };
 
-void tokenizer(string_t str);
+void lexer_testbed(string_t str);
 void init_tokenizer(string_t str);
 int keyword_check(string_t str, bool* is_keyword);
 int getTokenByPos(string_t str, int* k);

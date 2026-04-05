@@ -15,6 +15,7 @@ static bool_t TCFail;
 
 void UpdateTcFail();
 void ResetTcFail();
+void Brutal_all_test_case_stats();
 
 static void Brutal_register_file_name(string_t filename)
 {
@@ -23,13 +24,13 @@ static void Brutal_register_file_name(string_t filename)
 
 // Macro to replace exit() calls
 #if BRUTAL_FRAMEWORK_ENABLE == 1
-#define _exit(status) UpdateTcFail(); return t;
+#define _exit(status)  UpdateTcFail();  return t;
 #else
 #define _exit(status) exit(status)
 #endif
 
 void Brutal_init();
-void Brutal_all_test_case_stats();
+
 void Brutal_test_all_expr_TC_file();
 void Brutal_test_all_dcl_TC_file();
 void Brutal_test_all_func_TC_file();

@@ -85,7 +85,6 @@ int Brutal_expr_test_file(const char* loc)
 	{
 		TCResults[tc_counter] = 0;		
 		printf("[Brutal TestFrame error]: expression failed at file:%s!\n", loc);
-		Brutal_all_test_case_stats();
 		ResetTcFail();
 		return 0;
 	}
@@ -146,7 +145,6 @@ int Brutal_dcl_test_file(const char* loc)
 	{
 		TCResults[tc_counter] = 0;
 		printf("[BRUTAL TestFrame Error]: declaration failed !\n");
-		Brutal_all_test_case_stats();
 		ResetTcFail();
 		return 0;
 	}
@@ -200,7 +198,6 @@ int Brutal_stmt_test_file(const char* loc)
 	if (TCFail == True)
 	{
 		printf("error: statement failed !\n");
-		Brutal_all_test_case_stats();
 		ResetTcFail();
 		return 0;
 	}
@@ -257,7 +254,6 @@ int Brutal_func_test_file(const char* loc)
 	{
 		TCResults[tc_counter] = 0;
 		printf("[BRUTAL Error]: function failed !\n");
-		Brutal_all_test_case_stats();
 		ResetTcFail();
 		return 0;
 	}
@@ -349,14 +345,23 @@ void Brutal_test_all_stmt_TC_file()
 void Brutal_all_test_case_stats()
 {
 	int itr_tcs = 1;
+	bool_t TCType[NO_OF_TESTCASES] = {};
+	TCType[4] = True;
 #if BRUTAL_FRAMEWORK_ENABLE == 1
-	printf("======================================================================================\n");
-	printf("|                TestFile pathname                               |   Test Result     |\n");
-	printf("======================================================================================\n");
+	printf("============================================================================================================\n");
+	printf("|                TestFile pathname                               |    Testcase Type    |   Test Result     |\n");
+	printf("============================================================================================================\n");
 	for (;itr_tcs <= tc_counter; itr_tcs++)
 	{
-		printf("   %s  |  %s \n", TCFileNames[itr_tcs]->str, TCResults[itr_tcs] == 1 ? "PASS" : "FAIL");
-		printf("=====================================================================================\n");
+		printf("   %s  |  %s  |  %s \n", TCFileNames[itr_tcs]->str, (TCType[itr_tcs] == True)?"Negative" :"Positive", TCResults[itr_tcs] == 1 ? "PASS" : "FAIL");
+		printf("========================================================================================================\n");
+		if (TCType[itr_tcs] == False && TCResults[itr_tcs] == 0)
+		{
+			printf("============================================================================================================\n");
+			printf("|   Actual TestFile failed: %s    |\n", TCFileNames[itr_tcs]->str);
+			printf("============================================================================================================\n");
+
+		}
 	}
 #endif
 }
