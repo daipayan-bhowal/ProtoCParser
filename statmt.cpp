@@ -133,11 +133,17 @@ TreeNode* expression_statement()
 			getNextToken();
 			return t;
 		}
+		/*if (tok == ';')
+		{
+			checkEOF();
+			getNextToken();
+			return t;
+		}
 		else
 		{
 			printf("error: expected ';' at end of expression statement !\n");
 			_exit(0);
-		}
+		}*/
 
 	}
 
@@ -371,7 +377,7 @@ TreeNode* statement()
 			checkEOF();
 			getNextToken();
 			t = newStmtNode(While);
-			t->child[0] = expression();
+			t->child[0] = expression_statement();
 			tok = getCurrentToken();
 			if (tok == ')')
 			{

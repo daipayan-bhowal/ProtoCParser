@@ -383,6 +383,7 @@ void direct_declarator_dash(int *count_id)
 void direct_declarator()
 {
 	int tok = getCurrentToken();
+	bool_t isOpenBracket = False;
 	bool_t isOpenBraces = False;
 	bool_t isOpenArrayBrack = False;
 	bool_t isTypeQual = False;
@@ -420,6 +421,7 @@ void direct_declarator()
 
 		if (tok == '(')
 		{
+			isOpenBracket = True;
 			checkEOF();
 			tok = getNextToken();
 			if (tok == ')')
@@ -492,16 +494,20 @@ void direct_declarator()
 
 				}
 			}
-			/*if (tok != ')')
+			tok = getCurrentToken();
+			if (tok == ')' && isOpenBracket == True)
 			{
-				printf("error: expected ')' !\n");
-				_exit(0);
-			}
-			else
-			{
+				isOpenBracket = False;
 				checkEOF();
 				getNextToken();
-			} */
+
+			}
+			else if (isOpenBracket == True)
+			{
+				printf("error: expected ')' !");
+				_exit(0);
+			}
+
 			direct_declarator_dash(&count_id);
 			
 		}
@@ -650,6 +656,7 @@ void declaration(bool_t *IsDecl)
 		*IsDecl = False;
 		return;
 	}
+	tok = getCurrentToken();
 	if (tok != ';')
 	{
 		init_declarator_list();	
@@ -662,14 +669,16 @@ void declaration(bool_t *IsDecl)
 		else
 		{
 			*IsDecl = True;
-			getNextToken();
+			if(lookahead() != EOF)
+			   getNextToken();
 			return;
 		}
 	}
-	else
+	else 
 	{
 		*IsDecl = True;
-		getNextToken();
+		if (lookahead() != EOF)
+		 getNextToken();
 		return;
 	}
 }

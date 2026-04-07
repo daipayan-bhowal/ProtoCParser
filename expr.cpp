@@ -132,13 +132,13 @@ TreeNode* primary_expression(bool_t* IsPrim)
             t->attrib.ch = ConvertStrtoASCII(getTokenString());
         }
         //white_spaces();
-        if (lookahead() == EOF || lookahead() == ';')
+        if (lookahead() == ';')
         {
-            if(lookahead() == ';')
-                getNextToken();
+            getNextToken();
             return t;
         }
         getNextToken();
+        
         if (checkNextTokenIsPrim() == True ||
             checkNextTokenIsUnary() == True ||
             checkNextTokenIsUnknownChar() == True
@@ -153,13 +153,13 @@ TreeNode* primary_expression(bool_t* IsPrim)
         t = newExpNode(IDEN);
         *IsPrim = True;
         //white_spaces();
-        if (lookahead() == EOF || lookahead() == ';')
+        if (lookahead() == ';')
         {
-            if (lookahead() == ';')
-                getNextToken();
+            getNextToken();
             return t;
         }
         getNextToken();
+        
         if (checkNextTokenIsPrim() == True ||
             checkNextTokenIsUnary() == True ||
             checkNextTokenIsUnknownChar() == True
@@ -174,10 +174,9 @@ TreeNode* primary_expression(bool_t* IsPrim)
         t->attrib.strval = getTokenString();
         *IsPrim = True;
         //white_spaces();
-        if (lookahead() == EOF || lookahead() == ';')
+        if (lookahead() == ';')
         {
-            if (lookahead() == ';')
-                getNextToken();
+            getNextToken();
             return t;
         }
         getNextToken();
@@ -203,10 +202,8 @@ TreeNode* primary_expression(bool_t* IsPrim)
         {
             *IsPrim = True;
         }
-        if (lookahead() == EOF || lookahead() == ';')
+        if (lookahead() == ';')
         {
-            if (lookahead() == ';')
-                getNextToken();
             return t;
         }
 
@@ -1231,13 +1228,13 @@ TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
             t2->attrib.op = OP_POSTINCR;
             // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
             t2->child[0] = NULL;
-            if (lookahead() == EOF || lookahead() == ';')
+            if (lookahead() == ';')
             {
-                if (lookahead() == ';')
-                    getNextToken();
+                getNextToken();
                 return t2;
             }
             getNextToken();
+            
             t2->child[1] = postfix_expression_dash(IsPost, OP_POSTINCR);
 
         }
@@ -1254,13 +1251,13 @@ TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
             t2->attrib.op = OP_POSTDECR;
             // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
             t2->child[0] = NULL;
-            if (lookahead() == EOF || lookahead() == ';')
+            if (lookahead() == ';')
             {
-                if (lookahead() == ';')
-                    getNextToken();
+                getNextToken();
                 return t2;
             }
             getNextToken();
+            
             t2->child[1] = postfix_expression_dash(IsPost, OP_POSTDECR);
         }
     return t2;
@@ -1363,13 +1360,13 @@ TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim_g)
             t2->attrib.op = OP_POSTINCR;
             // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
             t2->child[1] = NULL;
-            if (lookahead() == EOF || lookahead() == ';')
+            
+            if (lookahead() == ';')
             {
-                if (lookahead() == ';')
-                    getNextToken();
+                getNextToken();
                 return t2;
             }
-            getNextToken();
+            getNextToken();            
             t2->child[2] = postfix_expression_dash(IsPost, OP_POSTINCR);
             return t2;
 
@@ -1382,13 +1379,13 @@ TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim_g)
             t2->attrib.op = OP_POSTDECR;
             // checkEOF(); don't fail on EOF for post increment and decrement as it can be last token in the file
             t2->child[1] = NULL;
-            if (lookahead() == EOF || lookahead() == ';')
+            if (lookahead() == ';')
             {
-                if (lookahead() == ';')
-                    getNextToken();
+                getNextToken();
                 return t2;
             }
             getNextToken();
+            
             t2->child[2] = postfix_expression_dash(IsPost, OP_POSTDECR);
             return t2;
         }

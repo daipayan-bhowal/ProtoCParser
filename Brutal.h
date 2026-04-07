@@ -2,7 +2,7 @@
 /* Brutal Test Framework
 	for C compiler testing
 */
-#define BRUTAL_FRAMEWORK_ENABLE 0 // 0 for disabling the framework, 1 for enabling the framework
+#define BRUTAL_FRAMEWORK_ENABLE 0// 0 for disabling the framework, 1 for enabling the framework
 
 #include <stdio.h>
 #include <stdlib.h>

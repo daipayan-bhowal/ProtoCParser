@@ -1,1 +1,1 @@
-a = b & c ^ x && d || z ~ c + &s -= b % ++m < k > l + f - --h
+a = b & c ^ x && d || z /= c + &s -= b % ++m < k > l + f - --h;

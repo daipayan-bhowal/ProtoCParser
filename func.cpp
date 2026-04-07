@@ -121,7 +121,7 @@ void func_defination_parameter_list()
 	if (tok == ')')
 	{
 		checkEOF();
-		getNextToken();
+		//getNextToken();
 		return;
 	}
 	else if (tok == ',')

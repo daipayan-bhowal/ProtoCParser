@@ -1,1 +1,1 @@
-z = ~x + y * m % y / k + ++l - --j | 1.345 || ~y & &l + *ptr - "hello" + 12435 / 88 ^ v && k << j || n /= ~x  * t %= k^y | q >>= o || !rt * b & c ^ x && d || z *= c + &s -= b % ++m < k > l + f - --h /= b & c ^ x && d || z /= c + &s -= b % ++m < k > l + f - --h 
+z = ~x + y * m % y / k + ++l - --j | 1.345 || ~y & &l + *ptr - "hello" + 12435 / 88 ^ v && k << j || n /= ~x  * t %= k^y | q >>= o || !rt * b & c ^ x && d || z *= c + &s -= b % ++m < k > l + f - --h /= b & c ^ x && d || z /= c + &s -= b % ++m < k > l + f - --h;

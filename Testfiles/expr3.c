@@ -1,1 +1,1 @@
-a = b & c ^ x && d || z ? x : y
+a = b & c ^ x && d || z ? x : y;
