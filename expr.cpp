@@ -208,11 +208,6 @@ TreeNode* primary_expression(bool_t* IsPrim)
         }
 
     }
-    /*else if ((t = expression()) == NULL)
-    {
-        IsParseFailed(__func__, __LINE__);
-        return NULL;
-    }*/
     return t;
 }
 TreeNode* expression()
@@ -220,10 +215,8 @@ TreeNode* expression()
     printf("frame: %s tok:%d tok_str:%s\n", __func__, getCurrentToken(), getTokenString()->str);
     TreeNode* t;
     TreeNode* t2;
-    //white_spaces();
     t = assignment_expression();
 
-    //white_spaces();
     int tok = getCurrentToken();
     if (tok == ',')
     {
@@ -367,7 +360,6 @@ TreeNode* assignment_expression()
 
         checkEOF();
         getNextToken();
-        //white_spaces();
         t->child[1] = assignment_expression();
 
     }
@@ -380,7 +372,6 @@ TreeNode* assignment_expression()
 
         checkEOF();
         getNextToken();
-        //white_spaces();
         t->child[1] = assignment_expression();
 
     }
@@ -394,7 +385,6 @@ TreeNode* conditional_expression()
     TreeNode* t = NULL,*t2= NULL,*t3= NULL;
     t3 = logical_OR_expression();
 
-    //white_spaces();
     int tok = getCurrentToken();
     if (tok == '?')
     {
@@ -403,12 +393,9 @@ TreeNode* conditional_expression()
 
         t->child[0] = t3;
 
-        //white_spaces();
         checkEOF();
         getNextToken();
         t->child[1] = expression();
-
-        //white_spaces();
 
         if ((tok = getCurrentToken()) != ':')
         {
@@ -418,9 +405,7 @@ TreeNode* conditional_expression()
 
         checkEOF();
         getNextToken();
-        //white_spaces();
         t2->child[0] = conditional_expression();
-        //t2->child[0] = t3;
         t->child[2] = t2;
         
         return t;
@@ -763,7 +748,7 @@ TreeNode* unary_expression()
     bool_t IsPost = False;
     bool_t IsPrim = False;
     int tok = getCurrentToken(), tok1, tok2;
-    if (tok == '(')
+    if (tok == '(')   // typecasting
     {
         //white_spaces();
         // fetch type name
@@ -1085,7 +1070,6 @@ TreeNode* unary_expression()
             checkEOF();
             getNextToken();
             t->child[0] = expression();
-            //white_spaces();
             tok = getCurrentToken();
             if (tok != ')')
             {
@@ -1109,7 +1093,6 @@ TreeNode* unary_expression()
     else
     {
         // printf("frame: %s tok:%d tok_str:%s\n", __func__, getCurrentToken(), getTokenString()->str);
-        //checkEOF();
         t = postfix_expression(&IsPost, &IsPrim);
         if (IsPost == True || IsPrim == True)
             return t;
@@ -1153,7 +1136,6 @@ TreeNode* postfix_expression_dash(bool_t *IsPost, OpTokenType parentNodeType)
             checkEOF();
             getNextToken();
             t2->child[0] = expression();
-            //white_spaces();
             if ((tok = getCurrentToken()) != ']')
             {
                 IsParseFailed(__func__, __LINE__);
@@ -1274,9 +1256,7 @@ TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim_g)
     bool_t IsPrim = False;
     t = primary_expression(&IsPrim);
 	*IsPrim_g = IsPrim;
-
-    //white_spaces();
-    //   return TRUE; 
+ 
         tok = getCurrentToken();
         if (tok == '[')
         {
@@ -1288,7 +1268,6 @@ TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim_g)
             checkEOF();
             getNextToken();
             t2->child[1] = expression();
-            //white_spaces();
             if ((tok = getCurrentToken()) != ']')
             {
                 IsParseFailed(__func__, __LINE__);
@@ -1404,7 +1383,6 @@ TreeNode* argument_expression_list()
     TreeNode* t;
     TreeNode* t2;
     t = assignment_expression();
-    //white_spaces();
     int tok = getCurrentToken();
     if (tok == ',')
     {
