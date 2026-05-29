@@ -1393,4 +1393,9 @@ TreeNode* argument_expression_list()
     return t;
 }
 
+TreeNode* constant_expression()
+{
+    return conditional_expression();
+}
+
 /**** 'Made in India' by Daipayan *****/

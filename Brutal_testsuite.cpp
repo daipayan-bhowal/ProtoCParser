@@ -115,7 +115,7 @@ int Brutal_expr_test_file(const char* loc)
 int Brutal_dcl_test_file(const char* loc)
 {
 	char* tape = {};
-	TreeNode* expr;
+	//TreeNode* expr;
 	int t = 0;
 	tape = (char*)calloc(1, sizeof(char));
 	tape_read((char*)loc, &tape);

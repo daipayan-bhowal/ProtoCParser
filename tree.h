@@ -107,7 +107,9 @@ typedef enum
 typedef enum
 {
     Stmt,
-    Expr
+    Expr,
+    ComplxType,
+    FuncDef
 }NodeType;
 
 typedef enum
@@ -122,6 +124,47 @@ typedef enum
     Unsign
 } DclType;
 
+typedef enum
+{
+    Struct,
+    Enum,
+    Union
+} CompositeType;
+
+typedef enum
+{
+    GLOBAL,
+    LOCAL,
+    FUNC,
+    EXTERNAL,
+    STATC
+} ScopeType;
+
+typedef enum
+{
+    ARRAY_OPEN,  // '['
+    ARRAY_CLOSE,  // ']'
+    POINTER,     // '*'
+    PARAMTYPE,    // parameter of decl
+    OPEN_BRACK,   // '('
+    CLOSE_BRACK,  // ')'
+    RETURNTYPE,
+    IDENTIFIER
+} ComplNodetype;
+
+struct ComplType
+{
+    ComplNodetype subCompntComplx;
+    union {
+        DclType return_type;
+        DclType params;
+        string_t Identifier;
+    } categ;
+    struct ComplType* Complx_child[2];
+};
+
+typedef struct ComplType ComplxNode;
+
 
 struct Tree
 {
@@ -131,6 +174,7 @@ struct Tree
     union {
         StmtType stmt;
         ExpType exp;
+        ComplType* ctyp;
     } Type;
     union {
         OpTokenType op;
@@ -149,6 +193,8 @@ typedef struct Tree TreeNode;
 
 TreeNode* newStmtNode(StmtType tp);
 TreeNode* newExpNode(ExpType tp);
+
+ComplxNode* newSubDeclNode(ComplNodetype tp);
 void printTree(TreeNode* t);
 void debugOp(TreeNode *t);
 
@@ -183,7 +229,9 @@ bool_t declaration_specifiers();
 void declarator();
 void abstract_declarator();
 TreeNode* statement();
+TreeNode* constant_expression();
 
+void specifier_qualifier_list();
 void func_defination_parameter_list();
 void func_declare_parameter_list();
 bool_t start_function();

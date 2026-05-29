@@ -27,6 +27,43 @@ TreeNode* newExpNode(ExpType tp)
     return t;
 }
 
+TreeNode* newTypeNode(ComplxNode* tp)
+{
+    int i;
+    TreeNode* t = (TreeNode*)malloc(sizeof(TreeNode));
+    for (i = 0; i < MAX_CHILD; i++)
+    {
+        t->child[i] = NULL;
+    }
+    t->Type.ctyp = tp;
+    t->nodeType = ComplxType;
+    // Future addition needed
+    return t;
+}
+
+ComplxNode* newSubDeclNode(ComplNodetype tp)
+{
+
+    ComplxNode* c = (ComplxNode*)malloc(sizeof(ComplxNode));
+    c->subCompntComplx = tp;
+    switch (tp)
+    {
+        case IDENTIFIER:
+            c->categ.Identifier = getTokenString();
+        break;
+
+        case PARAMTYPE:
+           // c->categ.params = getCurrentToken();
+        break;
+
+        case RETURNTYPE:
+           // c->categ.return_type = getCurrentToken();
+        break;
+
+    }
+    return c;
+}
+
 void debugOp(TreeNode *t)
 {
     if (t->nodeType == Expr)

@@ -74,5 +74,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="Manual\C Parser.pptx">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
