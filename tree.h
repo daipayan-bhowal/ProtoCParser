@@ -3,6 +3,8 @@
 #include "CLexer.h"
 #include "bool_t.h"
 #define MAX_CHILD 3
+#define NA -1
+#define _CRT_SECURE_NO_WARNINGS
 
 typedef enum
 {
@@ -115,20 +117,25 @@ typedef enum
 typedef enum
 {
     Void,
-    Char,
-    Short,
+    Char,  /* i.e. c = 'a'; */
+    Short, /* i.e. short s = 12; */
     Int,
     Long,
     Float,
     Double,
-    Unsign
+    Unsign,
+    StructDcl,
+    EnumDcl,
+    UnionDcl,
+    NotADclType = NA /* if init value is not available i.e int i;*/
 } DclType;
 
 typedef enum
 {
     Struct,
     Enum,
-    Union
+    Union,
+    NotAComposite = NA /* if it's not a composite type */
 } CompositeType;
 
 typedef enum
@@ -137,27 +144,36 @@ typedef enum
     LOCAL,
     FUNC,
     EXTERNAL,
-    STATC
+    STATC,
+    STRUCT_MEM,
+    UNION_MEM
 } ScopeType;
 
 typedef enum
 {
-    ARRAY_OPEN,  // '['
-    ARRAY_CLOSE,  // ']'
-    POINTER,     // '*'
+    DCLASSIGN,
+    ARRAY_OF,  // '[' ']'
+    POINTER_OF,     // '*'
     PARAMTYPE,    // parameter of decl
-    OPEN_BRACK,   // '('
-    CLOSE_BRACK,  // ')'
+   // OPEN_BRACK,   // '('
+   // CLOSE_BRACK,  // ')'
+    FUNC_DEF,
+    FUNC_DCL,
     RETURNTYPE,
-    IDENTIFIER
+    IDENTIFIER,
+    CONST_TYP_QUAL,
+    VOLAT_TYP_QUAL
 } ComplNodetype;
+
+struct Tree;
 
 struct ComplType
 {
     ComplNodetype subCompntComplx;
+    struct Tree* array_size;
     union {
         DclType return_type;
-        DclType params;
+        DclType params[50];
         string_t Identifier;
     } categ;
     struct ComplType* Complx_child[2];
@@ -194,7 +210,7 @@ typedef struct Tree TreeNode;
 TreeNode* newStmtNode(StmtType tp);
 TreeNode* newExpNode(ExpType tp);
 
-ComplxNode* newSubDeclNode(ComplNodetype tp);
+ComplxNode* newSubDeclNode(ComplNodetype tp, TreeNode *t);
 void printTree(TreeNode* t);
 void debugOp(TreeNode *t);
 
@@ -224,15 +240,14 @@ TreeNode* postfix_expression(bool_t* IsPost, bool_t* IsPrim);
 TreeNode* argument_expression_list();
 
 bool_t MaybeDcl();
-void declaration(bool_t *);
-bool_t declaration_specifiers();
-void declarator();
-void abstract_declarator();
+ComplxNode* declaration(bool_t *);
+ComplxNode* declarator();
+ComplxNode* direct_declarator();
 TreeNode* statement();
 TreeNode* constant_expression();
 
 void specifier_qualifier_list();
-void func_defination_parameter_list();
-void func_declare_parameter_list();
+void func_defination_parameter_list(DclType *d,int *no_of_params);
+void func_declare_parameter_list(DclType* d, int* no_of_params);
 bool_t start_function();
 

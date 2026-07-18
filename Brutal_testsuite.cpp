@@ -167,6 +167,81 @@ int Brutal_dcl_test_file(const char* loc)
 	return 0;
 }
 
+int Brutal_struct_union_test_file(const char* loc)
+{
+	char* tape = {};
+	//TreeNode* expr;
+	int t = 0;
+	tape = (char*)calloc(1, sizeof(char));
+	tape_read((char*)loc, &tape);
+	int file_length;
+	string_t str = string_file(tape, &file_length);
+	Symbol* p;
+	//const char *tape2 = "i++ + ++i;";
+	//string_t str = string((char*)tape2);
+	//string_t meta = string("\0");
+	//tokenizer(str);
+	init_tokenizer(str);
+	Brutal_register_file_name(string_const(loc));
+	/*for (i = 0; t != EOF;)
+	{
+		printf("Returned token is:%d\n", t = getTokenByPos(str, &i));
+
+	} */
+	bool_t IsStruct = False;
+	bool_t IsUnion = False;
+	bool_t IsDcl = False;
+	bool_t IsTypeDef = False;
+	printf("============================================================\n");
+	printf("   TC started for %s                                        \n", loc);
+	printf("============================================================\n");
+	printf("   Filecontent is: %s                                        \n", str->str);
+	printf("============================================================\n");
+	tc_counter++;
+	TCFileNames[tc_counter] = string_const(loc);
+	p = struct_or_union_start(&IsStruct, &IsUnion, &IsDcl, &IsTypeDef);
+	if (TCFail == True)
+	{
+		TCResults[tc_counter] = 0;
+		printf("[BRUTAL TestFrame Error]: declaration failed !\n");
+		ResetTcFail();
+		return 0;
+	}
+	if (p != NULL && (IsStruct == True || 
+		IsUnion == True ||
+		IsDcl == True))
+	{
+		TCResults[tc_counter] = 1;
+		if (IsDcl == True)
+		{
+			if(IsStruct == True)
+			   printf("Successful structure declaration !\n");
+			else if(IsUnion == True)
+			   printf("Successful union declaration !\n");
+		}
+		else
+		{
+			if (IsStruct == True)
+				printf("Successful structure definition !\n");
+			else if (IsUnion == True)
+				printf("Successful union definition !\n");
+
+		}
+	}
+	else
+	{
+		TCResults[tc_counter] = 0;
+		printf("error: structure or union parsing failed !\n");
+		_exit(0);
+	}
+	free(tape);
+	resetToken();
+	//  printf("entire file length is :%d\n", file_length);
+
+
+	return 0;
+}
+
 int Brutal_stmt_test_file(const char* loc)
 {
 	char* tape = {};

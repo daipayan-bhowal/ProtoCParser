@@ -41,11 +41,12 @@ TreeNode* newTypeNode(ComplxNode* tp)
     return t;
 }
 
-ComplxNode* newSubDeclNode(ComplNodetype tp)
+ComplxNode* newSubDeclNode(ComplNodetype tp, TreeNode* t)
 {
 
     ComplxNode* c = (ComplxNode*)malloc(sizeof(ComplxNode));
     c->subCompntComplx = tp;
+    c->array_size = t;
     switch (tp)
     {
         case IDENTIFIER:

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include "string_t.h"
 #include "bool_t.h"
+#include "symbol_tbl.h"
 
 #define Brutal_concat(a,b)  (const char*)(concat_copy(a,b)->str)
 static string_t currentFilename;
