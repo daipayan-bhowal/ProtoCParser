@@ -1,5 +1,6 @@
 #include "tree.h"
 #include "CLexer.h"
+#include "symbol_tbl.h"
 
 TreeNode* body() // compound statement and body are the same thing in C language
 {
@@ -36,6 +37,7 @@ TreeNode* body() // compound statement and body are the same thing in C language
 	}
 }
 
+
 /* 
 parameter_type_list
 	: parameter_list
@@ -52,12 +54,13 @@ parameter_list
 /*
 parameter_declaration
 	: declaration_specifiers declarator
-	| declaration_specifiers abstract_declarator
-	| declaration_specifiers */
+ */
 
-void func_declare_parameter_list()
+void func_declare_parameter_list(DclType* d, int *no_of_params)
 {
 	bool_t IsDclSpecf = False;
+	static int counter = 0;
+	Symbol s;
 	int tok = getCurrentToken();
 	if (tok == ')')
 	{
@@ -65,22 +68,28 @@ void func_declare_parameter_list()
 		getNextToken();
 		return;
 	}
-	else
+
+	IsDclSpecf = declaration_specifiers(&s);
+	if (tok != ','
+		&& tok != ')'
+		&& IsDclSpecf == False)
 	{
 		printf("error: function declaration is incomplete !");
 		_exit(0);
 	}
-	IsDclSpecf = declaration_specifiers();
-	if (IsDclSpecf == False)
+ 	else if (IsDclSpecf == False)
 	{
 		return;
 	}
-	abstract_declarator();
+
+	declarator();
 	if (tok == ',')
 	{
 		checkEOF();
 		getNextToken();
-		func_declare_parameter_list();
+		counter++;
+		func_declare_parameter_list(d, &counter);
+		*no_of_params = counter;
 	}
 	else if (tok == ELIPPSIS)
 	{
@@ -95,23 +104,27 @@ void func_declare_parameter_list()
 		{
 			checkEOF();
 			getNextToken();
+			counter++;
+			*no_of_params = counter;
+			counter = 0;
 			return;
 		}
 	}
 
 
 }
-void func_defination_parameter_list()
+void func_defination_parameter_list(DclType *d, int *no_params)
 {
 	bool_t IsDclSpecf = False;
 	int tok = getCurrentToken();
+	Symbol* s = NULL;
 	if (tok == ')')
 	{
 		checkEOF();
 		getNextToken();
 		return;
 	}
-	IsDclSpecf = declaration_specifiers();
+	IsDclSpecf = declaration_specifiers(s);
 	if (IsDclSpecf == False)
 	{
 		return;
@@ -128,7 +141,8 @@ void func_defination_parameter_list()
 	{
 		checkEOF();
 		getNextToken();
-		func_defination_parameter_list();
+		*no_params++;
+		func_defination_parameter_list(d, no_params);
 	}
 	else if (tok == ELIPPSIS)
 	{
@@ -150,8 +164,9 @@ void func_defination_parameter_list()
 
 void func_defin_or_decl(bool_t * isFuncDefin , bool_t  * isFuncDeclr)
 {
+	Symbol s;
 	int tok = getCurrentToken();
-	bool_t IsDclSpecf = declaration_specifiers();
+	bool_t IsDclSpecf = declaration_specifiers(&s);
 	if (IsDclSpecf == False)
 	{
 		*isFuncDefin = False;
@@ -182,6 +197,7 @@ bool_t start_function()
 {
 	bool_t isFuncDefin = False;
 	bool_t isFuncDeclr = False;
+	bool_t isFuncProtoTyp = False;
 	func_defin_or_decl(&isFuncDefin, &isFuncDeclr);
 	if (isFuncDeclr == True && isFuncDefin == True)
 	{

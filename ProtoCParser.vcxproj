@@ -136,6 +136,8 @@
     <ClCompile Include="ProtoCParser.cpp" />
     <ClCompile Include="statmt.cpp" />
     <ClCompile Include="string_t.cpp" />
+    <ClCompile Include="struct_and_enum.cpp" />
+    <ClCompile Include="symbol_tbl.cpp" />
     <ClCompile Include="tree.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +146,7 @@
     <ClInclude Include="CLexer.h" />
     <ClInclude Include="compile_t.h" />
     <ClInclude Include="string_t.h" />
+    <ClInclude Include="symbol_tbl.h" />
     <ClInclude Include="tape_t.h" />
     <ClInclude Include="tree.h" />
   </ItemGroup>

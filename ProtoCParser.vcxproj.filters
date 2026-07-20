@@ -48,6 +48,12 @@
     <ClCompile Include="Brutal_testsuite.cpp">
       <Filter>Brutal Test Framework</Filter>
     </ClCompile>
+    <ClCompile Include="struct_and_enum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="symbol_tbl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLexer.h">
@@ -70,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="Brutal.h">
       <Filter>Brutal Test Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol_tbl.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

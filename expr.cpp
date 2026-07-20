@@ -892,7 +892,7 @@ TreeNode* unary_expression()
             }
             else
             {
-                printf("error: expected cast operator, not:%s !", getTokenString());
+                printf("error: expected cast operator, not:%s !", getTokenString()->str);
                 _exit(0);
             }
 

@@ -1,7 +1,8 @@
 #include "tree.h"
 #include "CLexer.h"
+#include "symbol_tbl.h"
 
-void initializer_list();
+ComplxNode* initializer_list();
 
 bool_t MaybeDcl()
 {
@@ -129,7 +130,7 @@ declaration_specifiers
 	| type_qualifier declaration_specifiers
 */
 
-bool_t declaration_specifiers()
+bool_t declaration_specifiers(Symbol* sym)
 {
 	bool_t IsDclSpef = False;
 	bool_t isStorage = False;
@@ -145,6 +146,22 @@ bool_t declaration_specifiers()
 	int count_qual = 0;
 	int count_spef = 0;
 
+	bool_t IsTypSpef = False;
+	bool_t IsStruct = False;
+	bool_t IsUnion = False;
+	bool_t IsStructOrUnionDecl = False;
+	int tok = getCurrentToken();
+	if (tok == TYPEDEF && (lookahead() == STRUCT || lookahead() == UNION))
+	{
+		IsTypSpef = True;
+		getNextToken();
+		struct_or_union_start(&IsStruct, &IsUnion, &IsStructOrUnionDecl, &IsTypSpef);
+	}
+	else if (tok == STRUCT)
+	{
+		struct_or_union_start(&IsStruct, &IsUnion, &IsStructOrUnionDecl, &IsTypSpef);
+	}
+
 	while (
 		((stor_class = check_storage_class(&isStorage, &count_stor)) != -1) ||
 		((typ_qual = check_type_qualifier(&isTypeQual, &count_qual)) != -1) ||
@@ -157,17 +174,24 @@ bool_t declaration_specifiers()
 			printf("error: There can be a single class storage in declaration");
 			//_exit(0);
 		}
-		else if (count_qual > 1)
+		else
+		{
+			//sym->
+		}
+		
+		if (count_qual > 2)
 		{
 			printf("error: There can be a single type qualifier in declaration");
 			//_exit(0);
 		}
-		else if (count_signed > 1)
+		
+		if (count_signed > 1)
 		{
 			printf("error: There can be a single signed/unsigned in declaration");
 			//_exit(0);
 		}
-		else if (count_spef > 1)
+	   
+		if (count_spef > 1)
 		{
 			printf("error: There can be a single type specifier in declaration");
 			//_exit(0);
@@ -246,26 +270,23 @@ void type_specifier_list(bool_t *IsTypSpefList)
 /*   
 direct_declarator_dash
 	: ';'
+	| '(' ')'
+	|  '[' ']'
+	| '[' constant_expression ']'
+	| '(' type_specifier_list ')'
 	| '[' constant_expression ']' direct_declarator_dash
 	| '[' ']' direct_declarator_dash
 	| '(' type_specifier_list ')' direct_declarator_dash
 	| '(' parameter_list ')' direct_declarator_dash
 	| '(' ')' direct_declarator_dash
-	| '(' pointer IDENTIFIER ')' direct_declarator_dash
-direct_declarator
-	: 
-	| IDENTIFIER 
-	| IDENTIFIER '[' constant_expression ']' direct_declarator_dash
-	| IDENTIFIER '[' ']' direct_declarator
-	| IDENTIFIER '(' parameter_list ')' direct_declarator_dash
-	| IDENTIFIER '(' type_specifier_list ')' direct_declarator_dash
-	| IDENTIFIER '(' ')' direct_declarator_dash
 	| '(' pointer direct_declarator ')' direct_declarator_dash
-
 */
 
-void direct_declarator_dash(int *count_id)
+ComplxNode* direct_declarator_dash(int *count_id)
 {
+	ComplxNode *c = NULL,*c2= NULL, *prev = NULL;
+	TreeNode* tNode;
+	DclType d[10];
 	bool_t isTypeQual = False;
 	int count_qual = 0;
 	int tok = getCurrentToken();
@@ -273,22 +294,26 @@ void direct_declarator_dash(int *count_id)
 	bool_t IsTypSpef = False;
 	if (tok == ';')
 	{
-		return;
+		return NULL;
 	}
 	if (tok == '[')
 	{
+		
 		checkEOF();
 		getNextToken();
 		if (tok == ']')
 		{
+			c = newSubDeclNode(POINTER_OF, NULL); // 2nd param null means 0 size
 			checkEOF();
 			getNextToken();
-			direct_declarator_dash(count_id);
-			return;
+			c2= direct_declarator_dash(count_id);
+			c->Complx_child[1] = c2;
+			return c;
 		}
 		else
 		{
-			expression();
+			tNode=constant_expression();
+			
 			if (tok != ']')
 			{
 				printf("error: expected ']' !\n");
@@ -296,11 +321,14 @@ void direct_declarator_dash(int *count_id)
 			}
 			else
 			{
+				c = newSubDeclNode(ARRAY_OF, tNode);
+				c->array_size = tNode;
 				checkEOF();
 				getNextToken();
 			}
-			direct_declarator_dash(count_id);
-			return;
+			c2=direct_declarator_dash(count_id);
+			c->Complx_child[1] = c2;
+			return c;
 		}
 		
 
@@ -314,23 +342,42 @@ void direct_declarator_dash(int *count_id)
 		{
 			checkEOF();
 			getNextToken();
-			direct_declarator_dash(count_id);
-			return;
+			c = newSubDeclNode(FUNC_DCL, NULL);			
+			c2=direct_declarator_dash(count_id);
+			c->Complx_child[0] = c2;
+			return c;
 		}
 		else if (tok == '*')
 		{
 			while (tok == '*')
 			{
+				c = newSubDeclNode(POINTER_OF, NULL);
+				if (prev)
+				{
+					prev->Complx_child[1] = c;
+				}
+				prev = c;
 				checkEOF();
 				tok = getNextToken();
 			}
 			if (tok == ID)
 			{
+				prev = c;
+				c = newSubDeclNode(IDENTIFIER, NULL);
+				if (prev != NULL)
+				{
+					prev->Complx_child[0] = c;
+				}
+				prev = c;
 				checkEOF();
 				tok = getNextToken();
+				c = direct_declarator();
+				prev->Complx_child[0] = c;
+				return prev;
 			}
 			else if (check_type_qualifier(&isTypeQual, &count_qual) != -1)
 			{
+				c = newSubDeclNode(PARAMTYPE, NULL);
 				checkEOF();
 				getNextToken();
 				//type_qualifier_list();
@@ -344,35 +391,33 @@ void direct_declarator_dash(int *count_id)
 
 			checkEOF();
 			getNextToken();
-			direct_declarator_dash(count_id);
-			return;
+			c2=direct_declarator_dash(count_id);
+			return c2;
 		}
 		else 
 		{
-	      if (*count_id == 1)
-		  {
 
 			  if (lookahead() == ',' || lookahead() == ')')
 			  {
+				  c = newSubDeclNode(FUNC_DCL, NULL);
 				  type_specifier_list(&IsTypSpef);
 				  tok = getCurrentToken();
 				  if (IsTypSpef == True && tok == ')')
 				  {
+					  c = newSubDeclNode(PARAMTYPE, NULL);
 					  checkEOF();
 					  getNextToken();
-					  direct_declarator_dash(count_id);
-					  return;
+					  c2=direct_declarator_dash(count_id);
+					  return c2;
 				  }
 			  }
 			  else
 			  {
-				  func_defination_parameter_list();
+				  c = newSubDeclNode(FUNC_DEF, NULL);
+				  c2 = newSubDeclNode(PARAMTYPE, NULL);
+				  c->Complx_child[1] = c2;
+				  func_defination_parameter_list(d,0);
 			  }
-		  }
-          else
-		  {
-				declaration(&IsDcl);
-		  }
 			
 
 		}
@@ -380,8 +425,27 @@ void direct_declarator_dash(int *count_id)
 		
 	}
 }
-void direct_declarator()
+/*
+direct_declarator
+	:
+	|  '[' ']' direct_declarator_dash
+	| '[' constant_expression ']' direct_declarator_dash
+	|  '(' ')' direct_declarator_dash
+	|  '(' type_specifier_list ')' direct_declarator_dash
+	| IDENTIFIER
+	| IDENTIFIER '[' constant_expression ']' direct_declarator_dash
+	| IDENTIFIER '[' ']' direct_declarator_dash
+	| IDENTIFIER '(' parameter_list ')' direct_declarator_dash
+	| IDENTIFIER '(' type_specifier_list ')' direct_declarator_dash
+	| IDENTIFIER '(' ')' direct_declarator_dash
+	| '(' pointer direct_declarator ')' direct_declarator_dash
+*/
+ComplxNode* direct_declarator()
 {
+	ComplxNode* c = NULL,* c2 = NULL, *c3 = NULL, *prev = NULL, * parent;
+	DclType d[50] = { NotADclType };
+	int params = 0;
+	TreeNode* tNode = NULL;
 	int tok = getCurrentToken();
 	bool_t isOpenBracket = False;
 	bool_t isOpenBraces = False;
@@ -391,28 +455,15 @@ void direct_declarator()
 	bool_t IsDcl = False;
 	int count_id = 0;
 	int count_qual = 0;
-	if (tok == '*')
-	{
-		while (tok == '*')
-		{
-			checkEOF();
-			getNextToken();
-			while (check_type_qualifier(&isTypeQual, &count_qual) != -1)
-			{
-				checkEOF();
-				tok = getNextToken();
-				//type_qualifier_list();
-				 //check for more type qualifiers
-			}
-		}
-	}
-	isTypeQual = False;
-	count_id = 0;
+	int count_spef = 0;
+	int qual_tok= NA;
+	int typ_tok = NA;
 
 	if (tok == ID || tok == '(' || tok == '[')
 	{
 		if (tok == ID)
 		{
+			c = newSubDeclNode(IDENTIFIER, NULL);
 			checkEOF();
 			tok = getNextToken();	
 			count_id++;
@@ -422,31 +473,121 @@ void direct_declarator()
 		if (tok == '(')
 		{
 			isOpenBracket = True;
-			checkEOF();
-			tok = getNextToken();
-			if (tok == ')')
+			if (count_id > 0)
 			{
-
+				c2 = newSubDeclNode(FUNC_DEF, NULL);
+				c2->Complx_child[0] = c;
+				c = c2;
 				checkEOF();
 				tok = getNextToken();
-				direct_declarator_dash(&count_id);
-				return;
+			}
+			else if (count_id == 0)
+			{
+				checkEOF();
+				tok = getNextToken();
+				if (count_id == 0 && (typ_tok = check_type_specifier(&isTypeSpecf, &count_spef)) != -1)
+				{
+					while ((typ_tok = check_type_specifier(&isTypeSpecf, &count_spef)) != -1)
+					{
+
+					}
+					c = newSubDeclNode(PARAMTYPE, NULL);
+					c2 = direct_declarator_dash(&count_id);
+					c->Complx_child[1] = c2;
+					return c;
+				}
+				else if (tok == '*')
+				{
+					while (tok == '*')
+					{
+						c = newSubDeclNode(POINTER_OF, NULL);
+						if (prev != NULL)
+							prev->Complx_child[0] = c;
+						prev = c;
+						checkEOF();
+						tok = getNextToken();
+						while ((qual_tok=check_type_qualifier(&isTypeQual, &count_qual)) != -1)
+						{
+						    if (qual_tok == CONST)
+						    {
+							   c = newSubDeclNode(CONST_TYP_QUAL, NULL);
+							   if (prev != NULL)
+								   prev->Complx_child[0] = c;
+							   prev = c;
+							   tok = qual_tok;
+						    }
+						    else if (qual_tok == VOLATILE)
+							{
+							   c = newSubDeclNode(VOLAT_TYP_QUAL, NULL);
+							   if (prev != NULL)
+								   prev->Complx_child[0] = c;
+							   prev = c;
+							   tok = qual_tok;
+						    }
+							//type_qualifier_list();
+							 //check for more type qualifiers
+						}
+					}
+					if(tok != ID)
+					{
+						c2 = direct_declarator();
+						prev->Complx_child[0] = c2;
+					}
+					checkEOF();
+					tok=getNextToken();
+					if (tok != ')')
+					{
+						printf("error: expected ')' !");
+						_exit(0);
+					}
+					else
+					{
+						checkEOF();
+						tok = getNextToken();
+						c3 = direct_declarator_dash(&count_id);
+						prev->Complx_child[1] = c3;
+						return prev;
+
+					}
+				}
+
+
+			}
+
+			if (tok == ')')
+			{
+				checkEOF();
+				tok = getNextToken();
+				c2=direct_declarator_dash(&count_id);
+				if(c != NULL)
+					c->Complx_child[1] = c2;
+				return c;
 			}
 			else if (tok == '*')
 			{
 				while (tok == '*')
 				{
+					c = newSubDeclNode(POINTER_OF, NULL);
+					if (prev != NULL)
+						prev->Complx_child[1] = c;
+					prev = c;
 					checkEOF();
 					tok = getNextToken();
 				}
-				if (tok == ID)
+                if (tok == ID)
 				{
 					count_id++;
+					c = newSubDeclNode(IDENTIFIER, NULL);
+					if (prev != NULL)
+						prev->Complx_child[1] = c;
 					checkEOF();
 					tok = getNextToken();
 				}
 				else if (check_type_qualifier(&isTypeQual, &count_qual) != -1)
 				{
+					c = newSubDeclNode(PARAMTYPE, NULL);
+					if (prev != NULL)
+						prev->Complx_child[1] = c;
 					checkEOF();
 					tok = getNextToken();
 					//type_qualifier_list();
@@ -458,16 +599,6 @@ void direct_declarator()
 			}
 			else
 			{
-				if (tok == ')')
-				{
-
-					checkEOF();
-					getNextToken();
-					direct_declarator_dash(&count_id);
-					return;
-				}
-				else
-				{
 					if (count_id == 1)
 					{
 						if (lookahead() == ',' || lookahead() == ')')
@@ -476,23 +607,25 @@ void direct_declarator()
 							tok = getCurrentToken();
 							if (isTypeSpecf == True && tok == ')')
 							{
+								c2 = newSubDeclNode(FUNC_DCL, NULL);
 								checkEOF();
 								getNextToken();
-								direct_declarator_dash(&count_id);
-								return;
+								c3=direct_declarator_dash(&count_id);
+								c->Complx_child[0] = c2;
+								c->Complx_child[1] = c3;
+								return c;
 							}
 						}
 						else
 						{
-							func_defination_parameter_list();
+							c2 = newSubDeclNode(FUNC_DCL, NULL);
+							func_declare_parameter_list(d,&params);
 						}
 					}
-					else
+					/*else
 					{
-						declaration(&IsDcl);
-					}
-
-				}
+						c2=declaration(&IsDcl);
+					} */
 			}
 			tok = getCurrentToken();
 			if (tok == ')' && isOpenBracket == True)
@@ -508,7 +641,13 @@ void direct_declarator()
 				_exit(0);
 			}
 
-			direct_declarator_dash(&count_id);
+			c3=direct_declarator_dash(&count_id);
+			if (c != NULL)
+			{
+				c->Complx_child[1] = c3;
+				c->Complx_child[0] = c2;
+			}
+			return c;
 			
 		}
 		else if (tok == '[')
@@ -517,13 +656,18 @@ void direct_declarator()
 			getNextToken();
 			if (tok == ']')
 			{
+				c2 = newSubDeclNode(ARRAY_OF, NULL);
+				c2->Complx_child[0] = c;
 				checkEOF();
 				getNextToken();
-				return;
+				return c2;
 			}
 			else
 			{
-				expression();
+				c2 = newSubDeclNode(ARRAY_OF, NULL);
+				c2->Complx_child[0] = c;
+				tNode = constant_expression();
+				tok = getCurrentToken();
 				if (tok != ']')
 				{
 					printf("error: expected ']' !\n");
@@ -535,14 +679,20 @@ void direct_declarator()
 					getNextToken();
 				}
 			}
-			direct_declarator_dash(&count_id);
+			c3=direct_declarator_dash(&count_id);
+			c2->Complx_child[1] = c3;
+			return c2;
 		}
-		if (count_id < 1)
+		else if (count_id == 1)
+		{
+		  return c;
+        }
+		else if (count_id < 1)
 		{
 			printf("error: expected identifier !\n");
 			_exit(0);
 		}
-	}
+	} 
 	else if (tok == ')' || tok == ']')
 	{
 		printf("error: declaration syntax is not correct !\n");
@@ -564,33 +714,55 @@ pointer
 	| direct_declarator
   */
 
-void declarator()
+ComplxNode* declarator()
 {
+	ComplxNode *c= NULL, * c2=NULL;
 	int tok = getCurrentToken();
+	int qual_tok = NA;
 	bool_t isTypeQual = False;
 	int count_qual = 0;
 	if (tok == '*')
 	{
-		while ((check_type_qualifier(&isTypeQual, &count_qual) != -1) || tok == '*')
+		while (((qual_tok=check_type_qualifier(&isTypeQual, &count_qual)) != -1) || tok == '*')
 		{
-			getNextToken();
-			tok = getCurrentToken();
+			if (tok == '*')
+			{
+				c = newSubDeclNode(POINTER_OF, NULL);
+				getNextToken();
+				tok = getCurrentToken();
+			}
+			else if (qual_tok == CONST)
+			{
+				c = newSubDeclNode(CONST_TYP_QUAL, NULL);
+			}
+			else if (qual_tok == VOLATILE)
+			{
+				c = newSubDeclNode(VOLAT_TYP_QUAL, NULL);
+
+			}
 			//type_qualifier_list();
 			 //check for more type qualifiers
 		}
 		
 	}
-	direct_declarator();
+	c2 = direct_declarator();
+	if (c != NULL)
+		c->Complx_child[1] = c2;
+	else
+		c = c2;
+	return c;
 }
 
-void initializer()
+ComplxNode* initializer()
 {
+	ComplxNode* c;
+	TreeNode* tNode = NULL;
 	int tok = getCurrentToken();
 	if (tok == '{')
 	{
 		checkEOF();
 		getNextToken();
-		initializer_list();
+		c = initializer_list();
 		if (tok != '}')
 		{
 			printf("error: expected '}' !\n");
@@ -599,47 +771,59 @@ void initializer()
 	}
 	else
 	{
-		assignment_expression();
+		tNode = assignment_expression();
 	}
 }
 
-void initializer_list()
+ComplxNode* initializer_list()
 {
+	ComplxNode* c;
 	int tok = getCurrentToken();
-	initializer();
+	c = initializer();
 	if (tok == ',')
 	{
 		checkEOF();
 		getNextToken();
-		initializer_list();
+		c = initializer_list();
+		return c;
 	}
+	return c;
 }
 
-
-
-void init_declarator()
+ComplxNode* init_declarator()
 {
-	declarator();
+	ComplxNode* t,* t2, *t3 = NULL;
+	t = declarator();
+	if (t == NULL)
+		return NULL;
 	int tok = getCurrentToken();
 	if (tok == '=')
 	{
+		t3 = newSubDeclNode(DCLASSIGN, NULL);
 		checkEOF();
 		getNextToken();
-		initializer();
+		t2 = initializer();
+		t3->Complx_child[0] = t;
+		t3->Complx_child[1] = t2;
 	}
+	if (t3 != NULL)
+		return t3;
+	else
+		return t;
 }
 
-void init_declarator_list()
+ComplxNode* init_declarator_list()
 { 
-	
-	init_declarator();
+	ComplxNode* t,* t2;
+	t=init_declarator();
 	int tok = getCurrentToken();
 	if (tok == ',')
 	{
 		checkEOF();
 		getNextToken();
-		init_declarator_list();
+		t2= init_declarator_list();
 	}
+	return t;
 }
 /*
   declaration
@@ -647,19 +831,21 @@ void init_declarator_list()
 	| declaration_specifiers init_declarator_list ';'
 */
 
-void declaration(bool_t *IsDecl)
+ComplxNode* declaration(bool_t *IsDecl)
 {
 	int tok = getCurrentToken();
-	bool_t IsDclSpecf = declaration_specifiers();
+	Symbol s;
+	ComplxNode* c;
+	bool_t IsDclSpecf = declaration_specifiers(&s);
 	if (IsDclSpecf == False)
 	{
 		*IsDecl = False;
-		return;
+		return NULL;
 	}
 	tok = getCurrentToken();
 	if (tok != ';')
 	{
-		init_declarator_list();	
+		c= init_declarator_list();	
 		tok = getCurrentToken();
 		if (tok != ';')
 		{
@@ -671,123 +857,32 @@ void declaration(bool_t *IsDecl)
 			*IsDecl = True;
 			if(lookahead() != EOF)
 			   getNextToken();
-			return;
+			return c;
 		}
 	}
 	else 
-	{
+	{  
+		c = newSubDeclNode(IDENTIFIER, NULL);
 		*IsDecl = True;
 		if (lookahead() != EOF)
 		 getNextToken();
-		return;
-	}
-}
-/* 
-   direct_abstract_declarator
-	: '(' pointer direct_abstract_declarator ')'
-	|  '[' ']' direct_abstract_declarator
-	| '[' constant_expression ']' direct_abstract_declarator 
-	|  '(' ')' direct_abstract_declarator
-	|  '(' parameter_type_list ')' direct_abstract_declarator
-	;
-*/
-
-void direct_abstract_declarator()
-{
-	bool_t isTypeQual = False;
-	int tok = getCurrentToken();
-	int count_qual = 0;
-	while (tok == '(' || tok == '[' || tok == ']' || tok == ')')
-	{
-
-		if (tok == '(')
-		{
-			checkEOF();
-			getNextToken();
-			if (tok == '*')
-			{
-				while (tok == '*')
-				{
-					checkEOF();
-					getNextToken();
-					while (check_type_qualifier(&isTypeQual, &count_qual) != -1)
-					{
-						checkEOF();
-						getNextToken();
-						//type_qualifier_list();
-						 //check for more type qualifiers
-					}
-
-				}
-				if (tok != ')')
-				{
-					printf("error: expected ')' !\n");
-					_exit(0);
-				}
-				return;
-			}
-			else if (tok == ')')
-			{
-				checkEOF();
-				getNextToken();
-			}
-			else 
-			{
-				//parameter_type_list(); TO DO
-				if (tok == ')')
-				{
-					checkEOF();
-					getNextToken();
-
-				}
-				else
-				{
-					printf("error: expected ')' !\n");
-					_exit(0);
-				}
-				return;
-			}
-
-		}
-		else if (tok == '[')
-		{
-			checkEOF();
-			getNextToken();
-			if (tok != ']')
-				expression();
-			if (tok != ']')
-			{
-				printf("error: expected ']' !\n");
-				_exit(0);
-			}
-			else {
-				checkEOF();
-				getNextToken();
-			}
-		}
+		return c;
 	}
 }
 
 
-void abstract_declarator()
+
+ComplNodetype convert_token_to_nodeTyp(int tok)
 {
-	bool_t isTypeQual = False;
-	int tok = getCurrentToken();
-	int count_qual = 0;
-	if (tok == '*')
+	switch (tok)
 	{
-		checkEOF();
-		getNextToken();
-		while (check_type_qualifier(&isTypeQual, &count_qual) != -1)
-		{
-			checkEOF();
-			getNextToken();
-			//type_qualifier_list();
-			 //check for more type qualifiers
-		}
+	case CONST:
+		return CONST_TYP_QUAL;
+	case VOLATILE:
+		return VOLAT_TYP_QUAL;
 		
 	}
-	direct_abstract_declarator();
+
 }
 
 void specifier_qualifier_list()
@@ -819,5 +914,5 @@ void specifier_qualifier_list()
 void type_name()
 {
 	specifier_qualifier_list();
-	abstract_declarator();
+	direct_declarator();
 }
