@@ -482,6 +482,7 @@ ComplxNode* direct_declarator()
 		{
 			c = newSubDeclNode(IDENTIFIER, NULL);
 			setParent(parent, c);
+			prev = c;
 			checkEOF();
 			tok = getNextToken();	
 			count_id++;
@@ -553,6 +554,15 @@ ComplxNode* direct_declarator()
 						c2 = direct_declarator();
 						prev->Complx_child[0] = c2;
 					}
+					else
+					{
+						c = newSubDeclNode(IDENTIFIER, NULL);
+						setParent(parent, c);
+						if (prev != NULL)
+							prev->Complx_child[0] = c;
+						prev = c;
+
+					}
 					checkEOF();
 					tok=getNextToken();
 					if (tok != ')')
@@ -566,7 +576,7 @@ ComplxNode* direct_declarator()
 						tok = getNextToken();
 						c3 = direct_declarator_dash(&count_id);
 						prev->Complx_child[1] = c3;
-						return prev;
+						return parent;
 
 					}
 				}
