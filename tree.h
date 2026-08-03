@@ -151,7 +151,7 @@ typedef enum
 
 typedef enum
 {
-    DCLASSIGN,
+    EXPR_ASSIGN,
     ARRAY_OF,  // '[' ']'
     POINTER_OF,     // '*'
     PARAMTYPE,    // parameter of decl
@@ -209,10 +209,12 @@ typedef struct Tree TreeNode;
 
 TreeNode* newStmtNode(StmtType tp);
 TreeNode* newExpNode(ExpType tp);
+TreeNode* newTypeNode(ComplxNode* tp);
 
 ComplxNode* newSubDeclNode(ComplNodetype tp, TreeNode *t);
 void printTree(TreeNode* t);
 void debugOp(TreeNode *t);
+void debugDecl(ComplxNode* c);
 
 void IsParseFailed(const char source_func[], int line);
 void FailOnEOF(const char source_func[], int line);

@@ -140,7 +140,9 @@ int Brutal_dcl_test_file(const char* loc)
 	printf("============================================================\n");
 	tc_counter++;
 	TCFileNames[tc_counter] = string_const(loc);
-	declaration(&IsDcl);
+	ComplxNode* d = declaration(&IsDcl);
+	printf("d is %p\n", d);
+	debugDecl(d);
 	if (TCFail == True)
 	{
 		TCResults[tc_counter] = 0;

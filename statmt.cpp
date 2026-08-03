@@ -250,7 +250,7 @@ TreeNode* statement()
 		}
 		else if(MaybeDcl() == True)
 		{
-			declaration(&IsDcl);
+			newTypeNode(declaration(&IsDcl));
 		}
 		
 		t = statement();

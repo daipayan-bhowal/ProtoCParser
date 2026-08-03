@@ -46,6 +46,8 @@ ComplxNode* newSubDeclNode(ComplNodetype tp, TreeNode* t)
 
     ComplxNode* c = (ComplxNode*)malloc(sizeof(ComplxNode));
     c->subCompntComplx = tp;
+    c->Complx_child[0] = NULL;
+    c->Complx_child[1] = NULL;
     c->array_size = t;
     switch (tp)
     {
@@ -62,12 +64,62 @@ ComplxNode* newSubDeclNode(ComplNodetype tp, TreeNode* t)
         break;
 
     }
+    //printf(" c:%p c->child[0]:%p c->child[1]:%p", c, c->Complx_child[0], c->Complx_child[1]);
     return c;
+}
+
+void debugDecl(ComplxNode* c)
+{
+    
+    if (c == NULL)
+        return;
+    //printf("ptr of complxnode is %p , children are:%p %p\n", c, c->Complx_child[0], c->Complx_child[1]);
+
+    switch (c->subCompntComplx)
+    {
+    case EXPR_ASSIGN:
+        printf("DCLASSIGN\n");
+        break;
+    case ARRAY_OF:
+        printf("ARRAYOF\n");
+        break;
+    case POINTER_OF:
+        printf("PTR OF\n");
+        break;
+    case PARAMTYPE:
+        printf("PARAMTYPE\n");
+        break;
+    case FUNC_DEF:
+        printf("FUNC DEF\n");
+        break;
+    case FUNC_DCL:
+        printf("FUNC DCL\n");
+        break;
+    case RETURNTYPE:
+        printf("RETURN TYPE\n");
+        break;
+    case IDENTIFIER:
+        printf("IDENTIFIER\n");
+        break;
+    case CONST_TYP_QUAL:
+        printf("CONST_TYP_QUAL\n");
+        break;
+    case VOLAT_TYP_QUAL:
+        printf("VOLAT_TYP_QUAL\n");
+        break;
+
+    }
+    debugDecl(c->Complx_child[0]);
+    debugDecl(c->Complx_child[1]);
 }
 
 void debugOp(TreeNode *t)
 {
-    if (t->nodeType == Expr)
+    if (t->nodeType == ComplxType)
+    {
+        debugDecl(t->Type.ctyp);
+    }
+    else if (t->nodeType == Expr)
     {
         switch (t->Type.exp)
         {

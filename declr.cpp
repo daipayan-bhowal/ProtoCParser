@@ -29,6 +29,14 @@ bool_t MaybeDcl()
 	return False;
 }
 
+void setParent(ComplxNode* parent, ComplxNode* current_node)
+{
+	if (parent == NULL)
+	{
+		parent = current_node;
+	}
+}
+
 int check_storage_class(bool_t* isStorage, int* count_stor)
 {
 	int tok = getCurrentToken();
@@ -284,7 +292,7 @@ direct_declarator_dash
 
 ComplxNode* direct_declarator_dash(int *count_id)
 {
-	ComplxNode *c = NULL,*c2= NULL, *prev = NULL;
+	ComplxNode *c = NULL,*c2= NULL, *prev = NULL, *parent = NULL;
 	TreeNode* tNode;
 	DclType d[10];
 	bool_t isTypeQual = False;
@@ -304,6 +312,7 @@ ComplxNode* direct_declarator_dash(int *count_id)
 		if (tok == ']')
 		{
 			c = newSubDeclNode(POINTER_OF, NULL); // 2nd param null means 0 size
+			setParent(parent,c);
 			checkEOF();
 			getNextToken();
 			c2= direct_declarator_dash(count_id);
@@ -322,7 +331,9 @@ ComplxNode* direct_declarator_dash(int *count_id)
 			else
 			{
 				c = newSubDeclNode(ARRAY_OF, tNode);
+				setParent(parent, c);
 				c->array_size = tNode;
+				setParent(parent, c);
 				checkEOF();
 				getNextToken();
 			}
@@ -342,16 +353,18 @@ ComplxNode* direct_declarator_dash(int *count_id)
 		{
 			checkEOF();
 			getNextToken();
-			c = newSubDeclNode(FUNC_DCL, NULL);			
+			c = newSubDeclNode(FUNC_DCL, NULL);	
+			setParent(parent, c);
 			c2=direct_declarator_dash(count_id);
 			c->Complx_child[0] = c2;
-			return c;
+			return parent;
 		}
 		else if (tok == '*')
 		{
 			while (tok == '*')
 			{
 				c = newSubDeclNode(POINTER_OF, NULL);
+				setParent(parent, c);
 				if (prev)
 				{
 					prev->Complx_child[1] = c;
@@ -364,6 +377,7 @@ ComplxNode* direct_declarator_dash(int *count_id)
 			{
 				prev = c;
 				c = newSubDeclNode(IDENTIFIER, NULL);
+				setParent(parent, c);
 				if (prev != NULL)
 				{
 					prev->Complx_child[0] = c;
@@ -378,6 +392,7 @@ ComplxNode* direct_declarator_dash(int *count_id)
 			else if (check_type_qualifier(&isTypeQual, &count_qual) != -1)
 			{
 				c = newSubDeclNode(PARAMTYPE, NULL);
+				setParent(parent, c);
 				checkEOF();
 				getNextToken();
 				//type_qualifier_list();
@@ -400,11 +415,13 @@ ComplxNode* direct_declarator_dash(int *count_id)
 			  if (lookahead() == ',' || lookahead() == ')')
 			  {
 				  c = newSubDeclNode(FUNC_DCL, NULL);
+				  setParent(parent, c);
 				  type_specifier_list(&IsTypSpef);
 				  tok = getCurrentToken();
 				  if (IsTypSpef == True && tok == ')')
 				  {
 					  c = newSubDeclNode(PARAMTYPE, NULL);
+					  setParent(parent, c);
 					  checkEOF();
 					  getNextToken();
 					  c2=direct_declarator_dash(count_id);
@@ -414,6 +431,7 @@ ComplxNode* direct_declarator_dash(int *count_id)
 			  else
 			  {
 				  c = newSubDeclNode(FUNC_DEF, NULL);
+				  setParent(parent, c);
 				  c2 = newSubDeclNode(PARAMTYPE, NULL);
 				  c->Complx_child[1] = c2;
 				  func_defination_parameter_list(d,0);
@@ -442,7 +460,7 @@ direct_declarator
 */
 ComplxNode* direct_declarator()
 {
-	ComplxNode* c = NULL,* c2 = NULL, *c3 = NULL, *prev = NULL, * parent;
+	ComplxNode* c = NULL,* c2 = NULL, *c3 = NULL, *prev = NULL, * parent = NULL;
 	DclType d[50] = { NotADclType };
 	int params = 0;
 	TreeNode* tNode = NULL;
@@ -464,6 +482,7 @@ ComplxNode* direct_declarator()
 		if (tok == ID)
 		{
 			c = newSubDeclNode(IDENTIFIER, NULL);
+			setParent(parent, c);
 			checkEOF();
 			tok = getNextToken();	
 			count_id++;
@@ -492,6 +511,7 @@ ComplxNode* direct_declarator()
 
 					}
 					c = newSubDeclNode(PARAMTYPE, NULL);
+					setParent(parent, c);
 					c2 = direct_declarator_dash(&count_id);
 					c->Complx_child[1] = c2;
 					return c;
@@ -501,6 +521,7 @@ ComplxNode* direct_declarator()
 					while (tok == '*')
 					{
 						c = newSubDeclNode(POINTER_OF, NULL);
+						setParent(parent, c);
 						if (prev != NULL)
 							prev->Complx_child[0] = c;
 						prev = c;
@@ -568,6 +589,7 @@ ComplxNode* direct_declarator()
 				while (tok == '*')
 				{
 					c = newSubDeclNode(POINTER_OF, NULL);
+					setParent(parent, c);
 					if (prev != NULL)
 						prev->Complx_child[1] = c;
 					prev = c;
@@ -578,6 +600,7 @@ ComplxNode* direct_declarator()
 				{
 					count_id++;
 					c = newSubDeclNode(IDENTIFIER, NULL);
+					setParent(parent, c);
 					if (prev != NULL)
 						prev->Complx_child[1] = c;
 					checkEOF();
@@ -586,6 +609,7 @@ ComplxNode* direct_declarator()
 				else if (check_type_qualifier(&isTypeQual, &count_qual) != -1)
 				{
 					c = newSubDeclNode(PARAMTYPE, NULL);
+					setParent(parent, c);
 					if (prev != NULL)
 						prev->Complx_child[1] = c;
 					checkEOF();
@@ -716,7 +740,7 @@ pointer
 
 ComplxNode* declarator()
 {
-	ComplxNode *c= NULL, * c2=NULL;
+	ComplxNode *c= NULL, * c2=NULL, * prev = NULL, *parent = NULL;
 	int tok = getCurrentToken();
 	int qual_tok = NA;
 	bool_t isTypeQual = False;
@@ -728,16 +752,30 @@ ComplxNode* declarator()
 			if (tok == '*')
 			{
 				c = newSubDeclNode(POINTER_OF, NULL);
+				setParent(parent,c);
 				getNextToken();
+				prev = c;
 				tok = getCurrentToken();
 			}
 			else if (qual_tok == CONST)
 			{
 				c = newSubDeclNode(CONST_TYP_QUAL, NULL);
+				setParent(parent, c);
+				if (prev != NULL)
+				{
+					prev->Complx_child[0] = c;
+				}
+				prev = c;
 			}
 			else if (qual_tok == VOLATILE)
 			{
 				c = newSubDeclNode(VOLAT_TYP_QUAL, NULL);
+				setParent(parent, c);
+				if (prev != NULL)
+				{
+					prev->Complx_child[0] = c;
+				}
+				prev = c;
 
 			}
 			//type_qualifier_list();
@@ -749,14 +787,17 @@ ComplxNode* declarator()
 	if (c != NULL)
 		c->Complx_child[1] = c2;
 	else
+	{
 		c = c2;
+		setParent(parent, c2);
+	}
 	return c;
 }
 
-ComplxNode* initializer()
+ComplxNode* initializer(TreeNode* tNode)
 {
-	ComplxNode* c;
-	TreeNode* tNode = NULL;
+	ComplxNode* c= NULL;
+	tNode = NULL;
 	int tok = getCurrentToken();
 	if (tok == '{')
 	{
@@ -771,20 +812,28 @@ ComplxNode* initializer()
 	}
 	else
 	{
+		
 		tNode = assignment_expression();
+		c = newSubDeclNode(EXPR_ASSIGN, tNode);
 	}
+	return c;
 }
 
 ComplxNode* initializer_list()
 {
-	ComplxNode* c;
+	ComplxNode* c= NULL;
+	ComplxNode* c2 = NULL;
+	TreeNode* tNode = NULL;
+
 	int tok = getCurrentToken();
-	c = initializer();
+	c = initializer(tNode);
+	c->array_size = tNode;
 	if (tok == ',')
 	{
 		checkEOF();
 		getNextToken();
-		c = initializer_list();
+		c2 = initializer_list();
+		c->Complx_child[0] = c2;
 		return c;
 	}
 	return c;
@@ -792,19 +841,19 @@ ComplxNode* initializer_list()
 
 ComplxNode* init_declarator()
 {
-	ComplxNode* t,* t2, *t3 = NULL;
+	ComplxNode* t = NULL,* t2 = NULL, *t3 = NULL;
+	TreeNode* tNode = NULL;
 	t = declarator();
 	if (t == NULL)
 		return NULL;
 	int tok = getCurrentToken();
 	if (tok == '=')
-	{
-		t3 = newSubDeclNode(DCLASSIGN, NULL);
+	{	
 		checkEOF();
 		getNextToken();
-		t2 = initializer();
-		t3->Complx_child[0] = t;
-		t3->Complx_child[1] = t2;
+		t2 = initializer(tNode);
+		t2->Complx_child[0] = t;
+	//	printf("\nt3:%p t2:%p t:%p \n", t3, t2, t);
 	}
 	if (t3 != NULL)
 		return t3;
@@ -814,7 +863,7 @@ ComplxNode* init_declarator()
 
 ComplxNode* init_declarator_list()
 { 
-	ComplxNode* t,* t2;
+	ComplxNode* t = NULL,* t2= NULL;
 	t=init_declarator();
 	int tok = getCurrentToken();
 	if (tok == ',')
@@ -823,6 +872,7 @@ ComplxNode* init_declarator_list()
 		getNextToken();
 		t2= init_declarator_list();
 	}
+	//printf("t: %p \n", t);
 	return t;
 }
 /*
@@ -835,7 +885,7 @@ ComplxNode* declaration(bool_t *IsDecl)
 {
 	int tok = getCurrentToken();
 	Symbol s;
-	ComplxNode* c;
+	ComplxNode* c = NULL;
 	bool_t IsDclSpecf = declaration_specifiers(&s);
 	if (IsDclSpecf == False)
 	{
@@ -847,6 +897,7 @@ ComplxNode* declaration(bool_t *IsDecl)
 	{
 		c= init_declarator_list();	
 		tok = getCurrentToken();
+	//	printf("c is:%p \n");
 		if (tok != ';')
 		{
 			printf("error: expected ';' at end !\n");
@@ -866,8 +917,10 @@ ComplxNode* declaration(bool_t *IsDecl)
 		*IsDecl = True;
 		if (lookahead() != EOF)
 		 getNextToken();
+		//printf("c is:%p c->child[0]:%p c->child[1]:%p\n", c, c->Complx_child[0], c->Complx_child[1]);
 		return c;
 	}
+	return NULL;
 }
 
 

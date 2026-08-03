@@ -19,7 +19,7 @@ TreeNode* body() // compound statement and body are the same thing in C language
 		}
 		if (MaybeDcl() == True)
 		{
-			declaration(&IsDcl);
+			newTypeNode(declaration(&IsDcl));
 		}
 
 		t = statement();
