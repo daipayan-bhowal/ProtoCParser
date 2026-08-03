@@ -29,13 +29,12 @@ bool_t MaybeDcl()
 	return False;
 }
 
-void setParent(ComplxNode* parent, ComplxNode* current_node)
-{
-	if (parent == NULL)
-	{
-		parent = current_node;
-	}
-}
+#define setParent(parent, current_node) {   \
+	if (parent == NULL) \
+	{                    \
+		parent = current_node;  \
+	}                    \
+}   
 
 int check_storage_class(bool_t* isStorage, int* count_stor)
 {
@@ -784,14 +783,14 @@ ComplxNode* declarator()
 		
 	}
 	c2 = direct_declarator();
-	if (c != NULL)
-		c->Complx_child[1] = c2;
+	if (prev != NULL)
+		prev->Complx_child[1] = c2;
 	else
 	{
 		c = c2;
 		setParent(parent, c2);
 	}
-	return c;
+	return parent;
 }
 
 ComplxNode* initializer(TreeNode* tNode)
