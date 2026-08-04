@@ -348,7 +348,29 @@ ComplxNode* direct_declarator_dash(int *count_id)
 		checkEOF();
 		getNextToken();
 		tok = getCurrentToken();
-		if (tok == ')')
+		if (lookahead() == ',' || lookahead() == ')')
+		{
+			c = newSubDeclNode(FUNC_DCL, NULL);
+			setParent(parent, c);
+			prev = c;
+			type_specifier_list(&IsTypSpef);
+			tok = getCurrentToken();
+			if (IsTypSpef == True && tok == ')')
+			{
+				c = newSubDeclNode(PARAMTYPE, NULL);
+				setParent(parent, c);
+				if (prev != NULL)
+				{
+					prev->Complx_child[0] = c;
+				}
+				checkEOF();
+				getNextToken();
+				c2 = direct_declarator_dash(count_id);
+				c->Complx_child[0] = c2;
+				return parent;
+			}
+		}
+		else if (tok == ')')
 		{
 			checkEOF();
 			getNextToken();
