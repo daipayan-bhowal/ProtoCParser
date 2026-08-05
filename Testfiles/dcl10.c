@@ -1,0 +1,1 @@
+const int* (*ptr3) (int, float, short);
