@@ -321,7 +321,7 @@ ComplxNode* direct_declarator_dash(int *count_id)
 		else
 		{
 			tNode=constant_expression();
-			
+			tok = getCurrentToken();
 			if (tok != ']')
 			{
 				printf("error: expected ']' !\n");
