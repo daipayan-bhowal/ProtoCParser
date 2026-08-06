@@ -549,26 +549,40 @@ ComplxNode* direct_declarator()
 						prev = c;
 						checkEOF();
 						tok = getNextToken();
-						while ((qual_tok=check_type_qualifier(&isTypeQual, &count_qual)) != -1)
+						if (tok == ')')
 						{
-						    if (qual_tok == CONST)
-						    {
-							   c = newSubDeclNode(CONST_TYP_QUAL, NULL);
-							   if (prev != NULL)
-								   prev->Complx_child[0] = c;
-							   prev = c;
-							   tok = qual_tok;
-						    }
-						    else if (qual_tok == VOLATILE)
+							checkEOF();
+							getNextToken();
+							c2 = direct_declarator_dash(&count_id);
+							if (prev != NULL)
 							{
-							   c = newSubDeclNode(VOLAT_TYP_QUAL, NULL);
-							   if (prev != NULL)
-								   prev->Complx_child[0] = c;
-							   prev = c;
-							   tok = qual_tok;
-						    }
-							//type_qualifier_list();
-							 //check for more type qualifiers
+								prev->Complx_child[0] = c2;
+							}
+							return parent;
+						}
+						else
+						{
+							while ((qual_tok = check_type_qualifier(&isTypeQual, &count_qual)) != -1)
+							{
+								if (qual_tok == CONST)
+								{
+									c = newSubDeclNode(CONST_TYP_QUAL, NULL);
+									if (prev != NULL)
+										prev->Complx_child[0] = c;
+									prev = c;
+									tok = qual_tok;
+								}
+								else if (qual_tok == VOLATILE)
+								{
+									c = newSubDeclNode(VOLAT_TYP_QUAL, NULL);
+									if (prev != NULL)
+										prev->Complx_child[0] = c;
+									prev = c;
+									tok = qual_tok;
+								}
+								//type_qualifier_list();
+								 //check for more type qualifiers
+							}
 						}
 					}
 					if(tok != ID)
