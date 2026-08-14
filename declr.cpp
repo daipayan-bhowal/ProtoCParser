@@ -158,6 +158,11 @@ bool_t declaration_specifiers(Symbol* sym)
 	bool_t IsUnion = False;
 	bool_t IsStructOrUnionDecl = False;
 	int tok = getCurrentToken();
+	if (tok == ELIPPSIS)
+	{
+		getNextToken();
+		return True;
+	}
 	if (tok == TYPEDEF && (lookahead() == STRUCT || lookahead() == UNION))
 	{
 		IsTypSpef = True;
@@ -284,7 +289,7 @@ direct_declarator_dash
 	| '[' constant_expression ']' direct_declarator_dash
 	| '[' ']' direct_declarator_dash
 	| '(' type_specifier_list ')' direct_declarator_dash
-	| '(' parameter_list ')' direct_declarator_dash
+	| '(' func_def_parameter_list ')' 
 	| '(' ')' direct_declarator_dash
 	| '(' pointer direct_declarator ')' direct_declarator_dash
 */
@@ -310,7 +315,7 @@ ComplxNode* direct_declarator_dash(int *count_id)
 		getNextToken();
 		if (tok == ']')
 		{
-			c = newSubDeclNode(POINTER_OF, NULL); // 2nd param null means 0 size
+			c = newSubDeclNode(ARRAY_OF, NULL); // 2nd param null means 0 size
 			setParent(parent,c);
 			checkEOF();
 			getNextToken();
@@ -421,6 +426,54 @@ ComplxNode* direct_declarator_dash(int *count_id)
 			}
 
 		}
+		else
+		{
+			Symbol s;
+			while (tok != ')' || tok != ';')
+			{
+				IsDcl = declaration_specifiers(&s);
+				if (IsDcl == True)
+				{
+					c = newSubDeclNode(FUNC_DCL, NULL);
+					setParent(parent, c);
+					c2 = newSubDeclNode(PARAMTYPE, NULL);
+					c->Complx_child[0] = c2;
+					if (prev != NULL)
+						prev->Complx_child[0] = c;
+					
+					tok = getCurrentToken();
+					if (tok == ',')
+					{
+
+						checkEOF();
+						tok = getNextToken();
+					}
+					else if (tok == ')')
+					{
+						tok = getNextToken();
+						return parent;
+					}
+					else if (tok == ID && (lookahead() == ',' || lookahead() == ')'))
+					{
+						checkEOF();
+						tok = getNextToken();
+						if (tok == ',')
+						{
+							checkEOF();
+							tok = getNextToken();
+						}
+						else if (tok == ')')
+						{
+							tok = getNextToken();
+							return parent;
+						}
+
+					}
+				}
+				else
+					break;
+			}
+		}
 		
 		if (tok == ')')
 		{
@@ -456,6 +509,12 @@ ComplxNode* direct_declarator_dash(int *count_id)
 				  c2 = newSubDeclNode(PARAMTYPE, NULL);
 				  c->Complx_child[1] = c2;
 				  func_defination_parameter_list(d,0);
+				  tok = getCurrentToken();
+				  if (tok == ')')
+				  {
+					  checkEOF();
+					  tok=getNextToken();
+				  }
 			  }
 			
 
@@ -489,6 +548,7 @@ ComplxNode* direct_declarator()
 	bool_t isOpenBracket = False;
 	bool_t isOpenBraces = False;
 	bool_t isOpenArrayBrack = False;
+	bool_t isParam = False;
 	bool_t isTypeQual = False;
 	bool_t isTypeSpecf = False;
 	bool_t IsDcl = False;
@@ -570,7 +630,7 @@ ComplxNode* direct_declarator()
 									if (prev != NULL)
 										prev->Complx_child[0] = c;
 									prev = c;
-									tok = qual_tok;
+									//tok = qual_tok;
 								}
 								else if (qual_tok == VOLATILE)
 								{
@@ -578,7 +638,7 @@ ComplxNode* direct_declarator()
 									if (prev != NULL)
 										prev->Complx_child[0] = c;
 									prev = c;
-									tok = qual_tok;
+									//tok = qual_tok;
 								}
 								//type_qualifier_list();
 								 //check for more type qualifiers
@@ -589,6 +649,7 @@ ComplxNode* direct_declarator()
 					{
 						c2 = direct_declarator();
 						prev->Complx_child[0] = c2;
+						tok = getCurrentToken();
 					}
 					else
 					{
@@ -597,13 +658,52 @@ ComplxNode* direct_declarator()
 						if (prev != NULL)
 							prev->Complx_child[0] = c;
 						prev = c;
+						checkEOF();
+						tok = getNextToken();
+						if (tok == '[')
+						{
+							while (tok == '[')
+							{
+								checkEOF();
+								tok=getNextToken();
+								if (tok == ']')
+								{
+									c = newSubDeclNode(POINTER_OF, NULL); // 2nd param null means 0 size
+									if (prev != NULL)
+										prev->Complx_child[0] = c;
+									checkEOF();
+									tok = getNextToken();
+								}
+								else
+								{
+									tNode = constant_expression();
+									tok = getCurrentToken();
+									if (tok != ']')
+									{
+										printf("error: expected ']' !\n");
+										_exit(0);
+									}
+									else
+									{
+										c = newSubDeclNode(ARRAY_OF, tNode);
+										setParent(parent, c);
+										c->array_size = tNode;
+										setParent(parent, c);
+										checkEOF();
+										tok=getNextToken();
+									}
+								}
+							}
+
+
+						}
 
 					}
-					checkEOF();
-					tok=getNextToken();
+					//checkEOF();
+					//tok=getNextToken();
 					if (tok != ')')
 					{
-						printf("error: expected ')' !");
+						printf("%s:%d error: expected ')' !", __FILE__, __LINE__);
 						_exit(0);
 					}
 					else
@@ -722,13 +822,20 @@ ComplxNode* direct_declarator()
 		else if (tok == '[')
 		{
 			checkEOF();
-			getNextToken();
+			tok = getNextToken();
 			if (tok == ']')
 			{
 				c2 = newSubDeclNode(ARRAY_OF, NULL);
 				c2->Complx_child[0] = c;
 				checkEOF();
-				getNextToken();
+				tok = getNextToken();
+				c3 = direct_declarator_dash(&count_id);
+				if(c != NULL)
+				   c->Complx_child[0] = c3;
+				else
+				{
+					c2->Complx_child[0] = c3;
+				}
 				return c2;
 			}
 			else
@@ -762,15 +869,6 @@ ComplxNode* direct_declarator()
 			_exit(0);
 		}
 	} 
-	else if (tok == ')' || tok == ']')
-	{
-		printf("error: declaration syntax is not correct !\n");
-		_exit(0);
-	}
-
-
-	
-
 }
 /*
 pointer

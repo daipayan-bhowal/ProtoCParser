@@ -1,0 +1,1 @@
+typedef int (*func_ptr_t) ( unsigned int, ... );
