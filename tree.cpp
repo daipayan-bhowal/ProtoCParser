@@ -68,6 +68,14 @@ ComplxNode* newSubDeclNode(ComplNodetype tp, TreeNode* t)
     return c;
 }
 
+void swapNode(ComplxNode* t1, ComplxNode* t2)
+{
+    ComplNodetype temp;
+    temp = t1->subCompntComplx;
+    t1->subCompntComplx = t2->subCompntComplx;
+    t2->subCompntComplx = temp;
+}
+
 void debugDecl(ComplxNode* c)
 {
     

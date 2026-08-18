@@ -294,7 +294,7 @@ direct_declarator_dash
 	| '(' pointer direct_declarator ')' direct_declarator_dash
 */
 
-ComplxNode* direct_declarator_dash(int *count_id)
+ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 {
 	ComplxNode *c = NULL,*c2= NULL, *prev = NULL, *parent = NULL;
 	TreeNode* tNode;
@@ -317,9 +317,10 @@ ComplxNode* direct_declarator_dash(int *count_id)
 		{
 			c = newSubDeclNode(ARRAY_OF, NULL); // 2nd param null means 0 size
 			setParent(parent,c);
+			swapNode(c, prev_node);
 			checkEOF();
 			getNextToken();
-			c2= direct_declarator_dash(count_id);
+			c2= direct_declarator_dash(count_id, c);
 			c->Complx_child[1] = c2;
 			return c;
 		}
@@ -336,12 +337,12 @@ ComplxNode* direct_declarator_dash(int *count_id)
 			{
 				c = newSubDeclNode(ARRAY_OF, tNode);
 				setParent(parent, c);
+				swapNode(c, prev_node);
 				c->array_size = tNode;
-				setParent(parent, c);
 				checkEOF();
 				getNextToken();
 			}
-			c2=direct_declarator_dash(count_id);
+			c2=direct_declarator_dash(count_id, c);
 			c->Complx_child[1] = c2;
 			return c;
 		}
@@ -370,7 +371,7 @@ ComplxNode* direct_declarator_dash(int *count_id)
 					}
 					checkEOF();
 					getNextToken();
-					c2 = direct_declarator_dash(count_id);
+					c2 = direct_declarator_dash(count_id, c);
 					c->Complx_child[0] = c2;
 					return parent;
 				}
@@ -381,7 +382,7 @@ ComplxNode* direct_declarator_dash(int *count_id)
 			getNextToken();
 			c = newSubDeclNode(FUNC_DCL, NULL);	
 			setParent(parent, c);
-			c2=direct_declarator_dash(count_id);
+			c2=direct_declarator_dash(count_id, c);
 			c->Complx_child[0] = c2;
 			return parent;
 		}
@@ -480,7 +481,7 @@ ComplxNode* direct_declarator_dash(int *count_id)
 
 			checkEOF();
 			getNextToken();
-			c2=direct_declarator_dash(count_id);
+			c2=direct_declarator_dash(count_id, c);
 			return c2;
 		}
 		else 
@@ -498,7 +499,7 @@ ComplxNode* direct_declarator_dash(int *count_id)
 					  setParent(parent, c);
 					  checkEOF();
 					  getNextToken();
-					  c2=direct_declarator_dash(count_id);
+					  c2=direct_declarator_dash(count_id, c);
 					  return c2;
 				  }
 			  }
@@ -594,7 +595,7 @@ ComplxNode* direct_declarator()
 					}
 					c = newSubDeclNode(PARAMTYPE, NULL);
 					setParent(parent, c);
-					c2 = direct_declarator_dash(&count_id);
+					c2 = direct_declarator_dash(&count_id, c);
 					c->Complx_child[1] = c2;
 					return c;
 				}
@@ -613,7 +614,7 @@ ComplxNode* direct_declarator()
 						{
 							checkEOF();
 							getNextToken();
-							c2 = direct_declarator_dash(&count_id);
+							c2 = direct_declarator_dash(&count_id, c);
 							if (prev != NULL)
 							{
 								prev->Complx_child[0] = c2;
@@ -668,9 +669,9 @@ ComplxNode* direct_declarator()
 								tok=getNextToken();
 								if (tok == ']')
 								{
-									c = newSubDeclNode(POINTER_OF, NULL); // 2nd param null means 0 size
-									if (prev != NULL)
-										prev->Complx_child[0] = c;
+									c = newSubDeclNode(ARRAY_OF, NULL); // 2nd param null means 0 size
+									prev->Complx_child[0] = c;
+									swapNode(c,prev);
 									checkEOF();
 									tok = getNextToken();
 								}
@@ -686,9 +687,10 @@ ComplxNode* direct_declarator()
 									else
 									{
 										c = newSubDeclNode(ARRAY_OF, tNode);
+										prev->Complx_child[0] = c;
+										swapNode(c, prev);
 										setParent(parent, c);
 										c->array_size = tNode;
-										setParent(parent, c);
 										checkEOF();
 										tok=getNextToken();
 									}
@@ -710,7 +712,7 @@ ComplxNode* direct_declarator()
 					{
 						checkEOF();
 						tok = getNextToken();
-						c3 = direct_declarator_dash(&count_id);
+						c3 = direct_declarator_dash(&count_id, c2);
 						prev->Complx_child[1] = c3;
 						return parent;
 
@@ -724,7 +726,7 @@ ComplxNode* direct_declarator()
 			{
 				checkEOF();
 				tok = getNextToken();
-				c2=direct_declarator_dash(&count_id);
+				c2=direct_declarator_dash(&count_id, c);
 				if(c != NULL)
 					c->Complx_child[1] = c2;
 				return c;
@@ -779,7 +781,7 @@ ComplxNode* direct_declarator()
 								c2 = newSubDeclNode(FUNC_DCL, NULL);
 								checkEOF();
 								getNextToken();
-								c3=direct_declarator_dash(&count_id);
+								c3=direct_declarator_dash(&count_id, c2);
 								c->Complx_child[0] = c2;
 								c->Complx_child[1] = c3;
 								return c;
@@ -810,7 +812,7 @@ ComplxNode* direct_declarator()
 				_exit(0);
 			}
 
-			c3=direct_declarator_dash(&count_id);
+			c3=direct_declarator_dash(&count_id, c2);
 			if (c != NULL)
 			{
 				c->Complx_child[1] = c3;
@@ -826,10 +828,11 @@ ComplxNode* direct_declarator()
 			if (tok == ']')
 			{
 				c2 = newSubDeclNode(ARRAY_OF, NULL);
-				c2->Complx_child[0] = c;
+				c->Complx_child[0] = c2;
+				swapNode(c2,c);
 				checkEOF();
 				tok = getNextToken();
-				c3 = direct_declarator_dash(&count_id);
+				c3 = direct_declarator_dash(&count_id, c2);
 				if(c != NULL)
 				   c->Complx_child[0] = c3;
 				else
@@ -841,7 +844,8 @@ ComplxNode* direct_declarator()
 			else
 			{
 				c2 = newSubDeclNode(ARRAY_OF, NULL);
-				c2->Complx_child[0] = c;
+				c->Complx_child[0] = c2;
+				swapNode(c2, c);
 				tNode = constant_expression();
 				tok = getCurrentToken();
 				if (tok != ']')
@@ -855,7 +859,7 @@ ComplxNode* direct_declarator()
 					getNextToken();
 				}
 			}
-			c3=direct_declarator_dash(&count_id);
+			c3=direct_declarator_dash(&count_id, c2);
 			c2->Complx_child[1] = c3;
 			return c2;
 		}

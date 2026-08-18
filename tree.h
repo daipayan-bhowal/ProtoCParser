@@ -212,6 +212,7 @@ TreeNode* newExpNode(ExpType tp);
 TreeNode* newTypeNode(ComplxNode* tp);
 
 ComplxNode* newSubDeclNode(ComplNodetype tp, TreeNode *t);
+void swapNode(ComplxNode* t1, ComplxNode* t2);
 void printTree(TreeNode* t);
 void debugOp(TreeNode *t);
 void debugDecl(ComplxNode* c);
