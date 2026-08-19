@@ -672,6 +672,7 @@ ComplxNode* direct_declarator()
 									c = newSubDeclNode(ARRAY_OF, NULL); // 2nd param null means 0 size
 									prev->Complx_child[0] = c;
 									swapNode(c,prev);
+									prev = c;
 									checkEOF();
 									tok = getNextToken();
 								}
@@ -689,6 +690,7 @@ ComplxNode* direct_declarator()
 										c = newSubDeclNode(ARRAY_OF, tNode);
 										prev->Complx_child[0] = c;
 										swapNode(c, prev);
+										prev = c;
 										setParent(parent, c);
 										c->array_size = tNode;
 										checkEOF();
