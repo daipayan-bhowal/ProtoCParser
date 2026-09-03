@@ -312,7 +312,7 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 	{
 		
 		checkEOF();
-		getNextToken();
+		tok = getNextToken();
 		if (tok == ']')
 		{
 			c = newSubDeclNode(ARRAY_OF, NULL); // 2nd param null means 0 size
@@ -337,7 +337,10 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 			{
 				c = newSubDeclNode(ARRAY_OF, tNode);
 				setParent(parent, c);
-				swapNode(c, prev_node);
+				if (prev_node != NULL)
+				{
+					swapNode(c, prev_node);
+				}
 				c->array_size = tNode;
 				checkEOF();
 				getNextToken();
@@ -523,6 +526,7 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 
 		
 	}
+	return NULL;
 }
 /*
 direct_declarator
@@ -714,7 +718,10 @@ ComplxNode* direct_declarator()
 					{
 						checkEOF();
 						tok = getNextToken();
-						c3 = direct_declarator_dash(&count_id, c2);
+						if(c2 == NULL)
+							c3 = direct_declarator_dash(&count_id, c);
+						else 
+							c3 = direct_declarator_dash(&count_id, c2);
 						prev->Complx_child[1] = c3;
 						return parent;
 
