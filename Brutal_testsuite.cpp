@@ -384,6 +384,7 @@ void Brutal_test_all_dcl_TC_file()
 	Brutal_get_current_dir(char_pwd);
 	string_t pwd = string(char_pwd);
 
+	
 	Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl1.c")));
 	Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl2.c")));
 	Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl3.c")));
@@ -400,6 +401,8 @@ void Brutal_test_all_dcl_TC_file()
 	Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl14.c")));
 	Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl15.c")));
 	Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl16.c")));
+	Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl17.c")));
+	
 }
 
 void Brutal_test_all_func_TC_file()

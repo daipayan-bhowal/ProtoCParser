@@ -155,8 +155,8 @@ typedef enum
     ARRAY_OF,  // '[' ']'
     POINTER_OF,     // '*'
     PARAMTYPE,    // parameter of decl
-   // OPEN_BRACK,   // '('
-   // CLOSE_BRACK,  // ')'
+    OPEN_BRACK,   // '('
+    CLOSE_BRACK,  // ')'
     FUNC_DEF,
     FUNC_DCL,
     RETURNTYPE,

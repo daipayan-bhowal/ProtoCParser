@@ -294,14 +294,15 @@ direct_declarator_dash
 	| '(' pointer direct_declarator ')' direct_declarator_dash
 */
 
-ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
+ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node, ComplNodetype PrevNodeType)
 {
 	ComplxNode *c = NULL,*c2= NULL, *prev = NULL, *parent = NULL;
 	TreeNode* tNode;
 	DclType d[10];
 	bool_t isTypeQual = False;
 	int count_qual = 0;
-	int tok = getCurrentToken();
+	int tok = getCurrentToken(); 
+	ComplNodetype nextPrevNodeType;
 	bool_t IsDcl = False;
 	bool_t IsTypSpef = False;
 	if (tok == ';')
@@ -310,7 +311,11 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 	}
 	if (tok == '[')
 	{
-		
+		if (PrevNodeType == FUNC_DCL)
+		{
+			printf("error: wrong array type declared !");
+			exit(0);
+		}
 		checkEOF();
 		tok = getNextToken();
 		if (tok == ']')
@@ -318,9 +323,10 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 			c = newSubDeclNode(ARRAY_OF, NULL); // 2nd param null means 0 size
 			setParent(parent,c);
 			swapNode(c, prev_node);
+			nextPrevNodeType = ARRAY_OF;
 			checkEOF();
 			getNextToken();
-			c2= direct_declarator_dash(count_id, c);
+			c2= direct_declarator_dash(count_id, c, nextPrevNodeType);
 			c->Complx_child[1] = c2;
 			return c;
 		}
@@ -328,6 +334,7 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 		{
 			tNode=constant_expression();
 			tok = getCurrentToken();
+			nextPrevNodeType = ARRAY_OF;
 			if (tok != ']')
 			{
 				printf("error: expected ']' !\n");
@@ -337,6 +344,7 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 			{
 				c = newSubDeclNode(ARRAY_OF, tNode);
 				setParent(parent, c);
+				
 				if (prev_node != NULL)
 				{
 					swapNode(c, prev_node);
@@ -345,7 +353,7 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 				checkEOF();
 				getNextToken();
 			}
-			c2=direct_declarator_dash(count_id, c);
+			c2=direct_declarator_dash(count_id, c, nextPrevNodeType);
 			c->Complx_child[1] = c2;
 			return c;
 		}
@@ -359,11 +367,17 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 		tok = getCurrentToken();
 		if (lookahead() == ',' || lookahead() == ')')
 		{
+			if (PrevNodeType == FUNC_DCL)
+			{
+				printf("error: wrong function type declared !");
+				exit(0);
+			}
 				c = newSubDeclNode(FUNC_DCL, NULL);
 				setParent(parent, c);
 				prev = c;
 				type_specifier_list(&IsTypSpef);
 				tok = getCurrentToken();
+				nextPrevNodeType = FUNC_DCL;
 				if (IsTypSpef == True && tok == ')')
 				{
 					c = newSubDeclNode(PARAMTYPE, NULL);
@@ -374,18 +388,29 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 					}
 					checkEOF();
 					getNextToken();
-					c2 = direct_declarator_dash(count_id, c);
+					c2 = direct_declarator_dash(count_id, c, nextPrevNodeType);
 					c->Complx_child[0] = c2;
 					return parent;
 				}
 		}
 		else if (tok == ')')
 		{
+			if (PrevNodeType == FUNC_DCL)
+			{
+				printf("error: wrong function type declared !");
+				exit(0);
+			}
+			else if (PrevNodeType == ARRAY_OF)
+			{
+				printf("error: wrong array type declared !");
+				exit(0);
+			}
+			nextPrevNodeType = FUNC_DCL;
 			checkEOF();
 			getNextToken();
 			c = newSubDeclNode(FUNC_DCL, NULL);	
 			setParent(parent, c);
-			c2=direct_declarator_dash(count_id, c);
+			c2=direct_declarator_dash(count_id, c, nextPrevNodeType);
 			c->Complx_child[0] = c2;
 			return parent;
 		}
@@ -481,10 +506,10 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 		
 		if (tok == ')')
 		{
-
+			nextPrevNodeType = CLOSE_BRACK;
 			checkEOF();
 			getNextToken();
-			c2=direct_declarator_dash(count_id, c);
+			c2=direct_declarator_dash(count_id, c, nextPrevNodeType);
 			return c2;
 		}
 		else 
@@ -492,22 +517,33 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node)
 
 			  if (lookahead() == ',' || lookahead() == ')')
 			  {
+				  if (PrevNodeType == FUNC_DCL)
+				  {
+					  printf("error: wrong function type declared !");
+					  exit(0);
+				  }
 				  c = newSubDeclNode(FUNC_DCL, NULL);
 				  setParent(parent, c);
 				  type_specifier_list(&IsTypSpef);
 				  tok = getCurrentToken();
+				  PrevNodeType = FUNC_DCL;
 				  if (IsTypSpef == True && tok == ')')
 				  {
 					  c = newSubDeclNode(PARAMTYPE, NULL);
 					  setParent(parent, c);
 					  checkEOF();
 					  getNextToken();
-					  c2=direct_declarator_dash(count_id, c);
+					  c2=direct_declarator_dash(count_id, c, PrevNodeType);
 					  return c2;
 				  }
 			  }
 			  else
 			  {
+				  if (PrevNodeType == FUNC_DCL)
+				  {
+					  printf("error: wrong function type declared !");
+					  exit(0);
+				  }
 				  c = newSubDeclNode(FUNC_DEF, NULL);
 				  setParent(parent, c);
 				  c2 = newSubDeclNode(PARAMTYPE, NULL);
@@ -550,9 +586,13 @@ ComplxNode* direct_declarator()
 	int params = 0;
 	TreeNode* tNode = NULL;
 	int tok = getCurrentToken();
+	ComplNodetype PrevNodeType;
 	bool_t isOpenBracket = False;
 	bool_t isOpenBraces = False;
 	bool_t isOpenArrayBrack = False;
+	bool_t isCloseBrack = False;
+	bool_t isArray = False;
+	bool_t isFunc = False;
 	bool_t isParam = False;
 	bool_t isTypeQual = False;
 	bool_t isTypeSpecf = False;
@@ -581,14 +621,17 @@ ComplxNode* direct_declarator()
 			isOpenBracket = True;
 			if (count_id > 0)
 			{
+				isFunc = True;
 				c2 = newSubDeclNode(FUNC_DEF, NULL);
 				c2->Complx_child[0] = c;
+				PrevNodeType = FUNC_DEF;
 				c = c2;
 				checkEOF();
 				tok = getNextToken();
 			}
 			else if (count_id == 0)
 			{
+				PrevNodeType = OPEN_BRACK;
 				checkEOF();
 				tok = getNextToken();
 				if (count_id == 0 && (typ_tok = check_type_specifier(&isTypeSpecf, &count_spef)) != -1)
@@ -599,7 +642,7 @@ ComplxNode* direct_declarator()
 					}
 					c = newSubDeclNode(PARAMTYPE, NULL);
 					setParent(parent, c);
-					c2 = direct_declarator_dash(&count_id, c);
+					c2 = direct_declarator_dash(&count_id, c, PrevNodeType);
 					c->Complx_child[1] = c2;
 					return c;
 				}
@@ -616,9 +659,10 @@ ComplxNode* direct_declarator()
 						tok = getNextToken();
 						if (tok == ')')
 						{
+							PrevNodeType = POINTER_OF;
 							checkEOF();
 							getNextToken();
-							c2 = direct_declarator_dash(&count_id, c);
+							c2 = direct_declarator_dash(&count_id, c, PrevNodeType);
 							if (prev != NULL)
 							{
 								prev->Complx_child[0] = c2;
@@ -658,6 +702,7 @@ ComplxNode* direct_declarator()
 					}
 					else
 					{
+						isCloseBrack = True; // use to set PrevNodeType for future
 						c = newSubDeclNode(IDENTIFIER, NULL);
 						setParent(parent, c);
 						if (prev != NULL)
@@ -675,6 +720,7 @@ ComplxNode* direct_declarator()
 								{
 									c = newSubDeclNode(ARRAY_OF, NULL); // 2nd param null means 0 size
 									prev->Complx_child[0] = c;
+									PrevNodeType = ARRAY_OF;
 									swapNode(c,prev);
 									prev = c;
 									checkEOF();
@@ -693,6 +739,7 @@ ComplxNode* direct_declarator()
 									{
 										c = newSubDeclNode(ARRAY_OF, tNode);
 										prev->Complx_child[0] = c;
+										PrevNodeType = ARRAY_OF;
 										swapNode(c, prev);
 										prev = c;
 										setParent(parent, c);
@@ -716,12 +763,17 @@ ComplxNode* direct_declarator()
 					}
 					else
 					{
+						if (isCloseBrack == True)
+						{
+							isCloseBrack = False;
+							PrevNodeType = CLOSE_BRACK;
+						}
 						checkEOF();
 						tok = getNextToken();
 						if(c2 == NULL)
-							c3 = direct_declarator_dash(&count_id, c);
+							c3 = direct_declarator_dash(&count_id, c, PrevNodeType);
 						else 
-							c3 = direct_declarator_dash(&count_id, c2);
+							c3 = direct_declarator_dash(&count_id, c2, PrevNodeType);
 						prev->Complx_child[1] = c3;
 						return parent;
 
@@ -735,7 +787,7 @@ ComplxNode* direct_declarator()
 			{
 				checkEOF();
 				tok = getNextToken();
-				c2=direct_declarator_dash(&count_id, c);
+				c2=direct_declarator_dash(&count_id, c, PrevNodeType);
 				if(c != NULL)
 					c->Complx_child[1] = c2;
 				return c;
@@ -785,12 +837,13 @@ ComplxNode* direct_declarator()
 						{
 							type_specifier_list(&isTypeSpecf);
 							tok = getCurrentToken();
+							PrevNodeType = FUNC_DCL;
 							if (isTypeSpecf == True && tok == ')')
 							{
 								c2 = newSubDeclNode(FUNC_DCL, NULL);
 								checkEOF();
 								getNextToken();
-								c3=direct_declarator_dash(&count_id, c2);
+								c3=direct_declarator_dash(&count_id, c2, PrevNodeType);
 								c->Complx_child[0] = c2;
 								c->Complx_child[1] = c3;
 								return c;
@@ -799,6 +852,7 @@ ComplxNode* direct_declarator()
 						else
 						{
 							c2 = newSubDeclNode(FUNC_DCL, NULL);
+							PrevNodeType = FUNC_DCL;
 							func_declare_parameter_list(d,&params);
 						}
 					}
@@ -821,7 +875,7 @@ ComplxNode* direct_declarator()
 				_exit(0);
 			}
 
-			c3=direct_declarator_dash(&count_id, c2);
+			c3=direct_declarator_dash(&count_id, c2, PrevNodeType);
 			if (c != NULL)
 			{
 				c->Complx_child[1] = c3;
@@ -836,12 +890,13 @@ ComplxNode* direct_declarator()
 			tok = getNextToken();
 			if (tok == ']')
 			{
+				PrevNodeType = ARRAY_OF;
 				c2 = newSubDeclNode(ARRAY_OF, NULL);
 				c->Complx_child[0] = c2;
 				swapNode(c2,c);
 				checkEOF();
 				tok = getNextToken();
-				c3 = direct_declarator_dash(&count_id, c2);
+				c3 = direct_declarator_dash(&count_id, c2, PrevNodeType);
 				if(c != NULL)
 				   c->Complx_child[0] = c3;
 				else
@@ -852,6 +907,7 @@ ComplxNode* direct_declarator()
 			}
 			else
 			{
+				PrevNodeType = ARRAY_OF;
 				c2 = newSubDeclNode(ARRAY_OF, NULL);
 				c->Complx_child[0] = c2;
 				swapNode(c2, c);
@@ -868,7 +924,7 @@ ComplxNode* direct_declarator()
 					getNextToken();
 				}
 			}
-			c3=direct_declarator_dash(&count_id, c2);
+			c3=direct_declarator_dash(&count_id, c2, PrevNodeType);
 			c2->Complx_child[1] = c3;
 			return c2;
 		}
