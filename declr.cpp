@@ -510,7 +510,8 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node, ComplNo
 			checkEOF();
 			getNextToken();
 			c2=direct_declarator_dash(count_id, c, nextPrevNodeType);
-			return c2;
+			setParent(parent, c2);
+			return parent;
 		}
 		else 
 		{
