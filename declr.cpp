@@ -780,6 +780,20 @@ ComplxNode* direct_declarator()
 
 					}
 				}
+				else if (tok == ID)
+				{
+				   c = newSubDeclNode(IDENTIFIER, NULL);
+				   if (prev != NULL)
+				   {
+					   prev->Complx_child[0] = c;
+				   }
+				   setParent(parent, c);
+				   prev = c;
+				   checkEOF();
+				   tok = getNextToken();
+				   c2 = direct_declarator_dash(&count_id, c, PrevNodeType);
+				   c->Complx_child[0] = c2;
+                }
 
 
 			}

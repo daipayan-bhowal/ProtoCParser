@@ -816,7 +816,7 @@ KEYWORD:	 // start with keyword portion
 			// pos++;
 			*k = pos;
 			char* strid = c_string(string_id);
-			if (strncmp(strid, "if", 2) || strncmp(strid, "switch", 6) || strncmp(strid, "return", 6) || strncmp(strid, "sizeof", 6) || strncmp(strid, "while", 5) || strncmp(strid, "for", 3))
+			if ((strncmp(strid, "if", 2) == 0) || (strncmp(strid, "switch", 6) == 0) || (strncmp(strid, "return", 6) == 0) || (strncmp(strid, "sizeof", 6)==0) || (strncmp(strid, "while", 5) == 0) || (strncmp(strid, "for", 3) == 0))
 				return token;
 			else if (is_keyword == true)
 			{

@@ -403,6 +403,8 @@ void Brutal_test_all_dcl_TC_file()
 	Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl16.c")));
 	Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl17.c")));
 	Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl18.c")));
+	Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl19.c")));
+	//Brutal_dcl_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\dcl20.c")));
 }
 
 void Brutal_test_all_func_TC_file()
