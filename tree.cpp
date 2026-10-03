@@ -76,6 +76,16 @@ void swapNode(ComplxNode* t1, ComplxNode* t2)
     t2->subCompntComplx = temp;
 }
 
+void insertNode(ComplxNode* prev_node, ComplxNode* new_node)
+{
+    ComplxNode* temp1, *temp2;
+    temp1 = prev_node->Complx_child[0];
+    temp2 = prev_node->Complx_child[1];
+    prev_node->Complx_child[0] = new_node;
+    new_node->Complx_child[0] = temp1;
+    new_node->Complx_child[1] = temp2;
+}
+
 void debugDecl(ComplxNode* c)
 {
     

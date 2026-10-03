@@ -347,7 +347,10 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node, ComplNo
 				
 				if (prev_node != NULL)
 				{
-					swapNode(c, prev_node);
+					if (PrevNodeType == CLOSE_BRACK)
+						insertNode(prev_node,c);
+					else
+						swapNode(c, prev_node);
 				}
 				c->array_size = tNode;
 				checkEOF();
@@ -355,7 +358,7 @@ ComplxNode* direct_declarator_dash(int *count_id, ComplxNode* prev_node, ComplNo
 			}
 			c2=direct_declarator_dash(count_id, c, nextPrevNodeType);
 			c->Complx_child[1] = c2;
-			return c;
+			return parent;
 		}
 		
 
@@ -579,6 +582,7 @@ direct_declarator
 	| IDENTIFIER '(' type_specifier_list ')' direct_declarator_dash
 	| IDENTIFIER '(' ')' direct_declarator_dash
 	| '(' pointer direct_declarator ')' direct_declarator_dash
+	| '(' ID direct_declarator_dash ')' direct_declarator_dash
 */
 ComplxNode* direct_declarator()
 {
@@ -753,6 +757,59 @@ ComplxNode* direct_declarator()
 
 
 						}
+						else if (tok == '(')
+						{
+							if (lookahead() == ',' || lookahead() == ')')
+							{
+								checkEOF();
+								tok = getNextToken();
+								if (PrevNodeType == FUNC_DCL)
+								{
+									printf("error: wrong function type declared !");
+									exit(0);
+								}
+								c = newSubDeclNode(FUNC_DCL, NULL);
+								setParent(parent, c);
+								prev->Complx_child[0] = c;
+								prev = c;
+								if (tok == ')')
+								{
+									checkEOF();
+									tok = getNextToken();
+									c = newSubDeclNode(PARAMTYPE, NULL);
+									setParent(parent, c);
+									prev->Complx_child[0] = c;
+									if (isOpenBracket == True && tok == ')')
+									{
+										checkEOF();
+										tok = getNextToken();
+										PrevNodeType = CLOSE_BRACK;
+										c2 = direct_declarator_dash(&count_id, parent, PrevNodeType);
+									}
+									else {
+										c2 = direct_declarator_dash(&count_id, c, PrevNodeType);
+										if (c != NULL)
+											c->Complx_child[0] = c2;
+									}
+
+									return parent;
+								}
+								type_specifier_list(&isTypeSpecf);
+								tok = getCurrentToken();
+								PrevNodeType = FUNC_DCL;
+								if (isTypeSpecf == True && tok == ')')
+								{
+									c = newSubDeclNode(PARAMTYPE, NULL);
+									setParent(parent, c);
+									checkEOF();
+									getNextToken();
+									c2 = direct_declarator_dash(&count_id, c, PrevNodeType);
+									return c2;
+								}
+							}
+
+
+						}
 
 					}
 					//checkEOF();
@@ -793,6 +850,13 @@ ComplxNode* direct_declarator()
 				   tok = getNextToken();
 				   c2 = direct_declarator_dash(&count_id, c, PrevNodeType);
 				   c->Complx_child[0] = c2;
+				   if (tok == ')')
+				   {
+					   checkEOF();
+					   tok = getNextToken();
+					   c3 = direct_declarator_dash(&count_id, c, PrevNodeType);
+					   c->Complx_child[1] = c3;
+				   }
                 }
 
 
