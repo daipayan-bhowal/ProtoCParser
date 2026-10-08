@@ -129,7 +129,6 @@
   <ItemGroup>
     <ClCompile Include="Brutal_testsuite.cpp" />
     <ClCompile Include="CLexer.cpp" />
-    <ClCompile Include="codegen.cpp" />
     <ClCompile Include="compile_t.cpp" />
     <ClCompile Include="declr.cpp" />
     <ClCompile Include="expr.cpp" />

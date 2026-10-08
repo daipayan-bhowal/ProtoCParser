@@ -374,6 +374,7 @@ void Brutal_test_all_expr_TC_file()
 	Brutal_expr_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\expr12.c")));
 	Brutal_expr_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\expr13.c")));
 	Brutal_expr_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\expr14.c")));
+	Brutal_expr_test_file(Brutal_concat(pwd, string_const("\\Testfiles\\expr15.c")));
 }
 
 void Brutal_test_all_dcl_TC_file()

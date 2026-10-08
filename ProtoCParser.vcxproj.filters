@@ -54,9 +54,6 @@
     <ClCompile Include="symbol_tbl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="codegen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLexer.h">
